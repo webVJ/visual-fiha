@@ -33,6 +33,9 @@ module.exports = require('ampersand-view').extend({
   },
 
   drawScales: function(/*bufferLength*/) {
+    var source = this.parent;
+    var analyser = source.parent.audioAnalyser;
+    var bufferLength = analyser.frequencyBinCount;
     var ctx = this.ctx;
     var x = ctx.canvas.width * 0.5;
     var y = ((ctx.canvas.height - 30) * 0.5) + 15;
@@ -43,8 +46,8 @@ module.exports = require('ampersand-view').extend({
     ctx.fillStyle = ctx.strokeStyle = this.color;
     var i, a, ax, ay, bx, by, lx, ly, ca, sa;
     ctx.globalAlpha = 0.5;
-    for (i = 0; i < 360; i += 15) {
-      a = ((rad / 360) * i) - Math.PI;
+    for (i = 0; i < bufferLength; i += (bufferLength / 16)) {
+      a = ((rad / bufferLength) * i) - Math.PI;
       ca = Math.cos(a);
       sa = Math.sin(a);
       ax = Math.round(x + (ca * (r / 10)));
