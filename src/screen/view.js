@@ -277,7 +277,7 @@ var ScreenView = View.extend(clientMixin, {
     var audio = this.model.audio;
     if (!audio || !audio.frequency || !audio.timeDomain) return this;
     var length = audio.frequency.length;
-    var l, li = 0, af = 0, av = 0, ll = length / 16;
+    var l, li = 0, af = 0, av = 0, ll = 1;
 
     for (l = 0; l < length; l += ll) {
       li++;
