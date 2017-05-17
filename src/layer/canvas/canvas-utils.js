@@ -146,7 +146,7 @@ utils.grid = function grid(width, height, itemsCount, rowsCount, process) {
     for (c = 0; c < columnsCount; c++) {
       xy[1] = rowHeight * (r + 0.5);
       xy[0] = columnWidth * (c + 0.5);
-      process(...xy);
+      process(...xy, r, c);
     }
   }
 };
