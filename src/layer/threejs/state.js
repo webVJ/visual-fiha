@@ -44,9 +44,9 @@ var ShapeCollection = Collection.extend({
 
 var Color = State.extend({
   props: {
-    r: ['number', true, 122],
-    g: ['number', true, 122],
-    b: ['number', true, 122]
+    r: ['number', true, 0.5],
+    g: ['number', true, 0.5],
+    b: ['number', true, 0.5]
   }
 });
 
