@@ -319,11 +319,9 @@ var AceEditor = View.extend({
       // var languageTools = ace.require('ace/ext/language_tools');
       // languageTools.addCompleter(canvasCompleter);
 
-      console.info('view.snippets', view.snippets);
       if (view.snippets) {
         var snippetManager = ace.require('ace/snippets').snippetManager;
         var snippets = snippetManager.parseSnippetFile(view.snippets);
-        console.info('snippetManager', snippets);
         snippetManager.register(snippets, 'javascript');
       }
     }
