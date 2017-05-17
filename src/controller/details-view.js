@@ -46,10 +46,10 @@ var DetailsView = View.extend({
     var path = objectPath(this.model);
     var script = this.model.get(propName) || '';
     rootView.getEditor(assign({}, {
-      tabName: this.model.getId() + ' ' + propName,
+      tabName: this.model.getId() + ' ' + propName.replace('Function', ''),
       script: script,
       language: 'javascript',
-      title: path + '.' + propName,
+      title: path + '.' + propName.replace('Function', ''),
       onshoworigin: function() {
         rootView.trigger('blink', path);
       },
