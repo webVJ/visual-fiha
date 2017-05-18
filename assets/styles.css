@@ -360,7 +360,7 @@ Layout
 .test-page,
 .controller-app {
   font-size: 13px;
-  font-family: sans;
+  font-family: sans-serif;
   color: var(--text-color);
   background-color: var(--bg-color);
   font-weight: 400;
