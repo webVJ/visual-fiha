@@ -221,3 +221,18 @@ utils.restoreContexts = function restoreContexts(ctx, cache, count, preprocess, 
     }
   }
 };
+
+
+utils.writeThings = function writeThings(ctx, lines = []) {
+  var fSize = parseInt(ctx.font);
+
+  var start = ((ctx.canvas.height + fSize) - (lines.length * fSize)) * 0.5;
+  var x, y;
+  lines.forEach(function(txt, t) {
+    x = ctx.canvas.width * 0.5;
+    y = start + (t * fSize);
+    ctx.fillText(txt, x, y);
+    ctx.strokeText(txt, x, y);
+  });
+};
+

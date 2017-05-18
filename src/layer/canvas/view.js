@@ -82,6 +82,7 @@ module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programma
       circle: function(...args) { utils.circle(ctx, ...args); },
       polygone: function(...args) { utils.polygone(ctx, ...args); },
       line: function(...args) { utils.line(ctx, ...args); },
+      writeThings: function(...args) { utils.writeThings(ctx, ...args); },
       cacheContext: function(...args) { utils.cacheContext(ctx, ...args); },
       restoreContexts: function(...args) { utils.restoreContexts(ctx, ...args); },
     });

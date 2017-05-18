@@ -57,13 +57,16 @@ module.exports = `
       <li class="utils txt text">
         <span class="function">txt</span>(text = '', x = width / 2, h = width / 2)
       </li>
-      <li class="utils dot text">
+      <li class="utils writeThings text">
+        <span class="function">writeThings</span>(lines = [], scale = 1)
+      </li>
+      <li class="utils dot">
         <span class="function">dot</span>(x = width / 2, h = width / 2, r = 10, start = 0, end = Math.PI * 2)
       </li>
-      <li class="utils shape circle text">
+      <li class="utils shape circle">
         <span class="function">circle</span>(x = width / 2, h = width / 2, r = 10, start = 0, end = Math.PI * 2)
       </li>
-      <li class="utils line text">
+      <li class="utils line">
         <span class="function">line</span>([x, y])
       </li>
       <li class="utils shape polygone text">

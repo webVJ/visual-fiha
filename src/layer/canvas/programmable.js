@@ -25,6 +25,7 @@ module.exports = {
       'repeat',
       'log',
       'txt',
+      'writeThings',
       'dot',
       'circle',
       'polygone',
