@@ -2,7 +2,9 @@ var layerPrologue = require('./../function-prologue');
 module.exports = {
   setup: {
     prologue: layerPrologue,
-    argNames: []
+    argNames: [
+      'getLoaderViewByName'
+    ]
   },
   update: {
     prologue: layerPrologue,
@@ -19,6 +21,7 @@ module.exports = {
 
       'param',
       'scene',
+      'getLoaderViewByName',
       'utils'
     ]
   }

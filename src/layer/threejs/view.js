@@ -217,22 +217,77 @@ function applyTransformations(model, object) {
 }
 
 ThreeLoader.types = {};
-ThreeLoader.types.obj = ThreeLoader.extend({
+ThreeLoader.types.scene = ThreeLoader.extend({
   load: function(done, progress = noop, error = noop) {
     var view = this;
     var model = this.model;
+    console.trace('%s Scene loader', model.name);
 
-    var objLoader = new THREE.OBJLoader();
-    objLoader.setPath(model.path);
+    var loader = new THREE.ObjectLoader();
 
-    function objLoaded(object) {
+    function loaded(object) {
+      console.info(model.name +' object', object);
+      if (!object) return;
+      view.loaded = object;
+      // applyTransformations(model, object);
+      done();
+    }
+
+    loader.load(model.path + model.src, loaded, function(...args) {
+      console.log('%s loading progress', model.name, ...args);
+    }, function(...args) {
+      console.warn('%c%s loading error', 'color:red', model.name, ...args);
+      error(...args);
+    });
+  }
+});
+
+
+
+
+ThreeLoader.types.json = ThreeLoader.extend({
+  load: function(done, progress = noop, error = noop) {
+    console.info('JSON loader');
+    var view = this;
+    var model = this.model;
+
+    var loader = new THREE.JSONLoader();
+
+    function loaded(object) {
+      console.info(model.name +' object', object);
+      if (!object) return;
       object.name = model.name;
       view.loaded = object;
       applyTransformations(model, object);
       done();
     }
 
-    objLoader.load(model.src, objLoaded, progress, error);
+    loader.load(model.path + model.src, loaded, progress, function(...args) {
+      console.warn('%c%s loading error', 'color:red', model.name, ...args);
+      error(...args);
+    });
+  }
+});
+
+
+
+
+ThreeLoader.types.obj = ThreeLoader.extend({
+  load: function(done, progress = noop, error = noop) {
+    var view = this;
+    var model = this.model;
+
+    var loader = new THREE.OBJLoader();
+    loader.setPath(model.path);
+
+    function loaded(object) {
+      object.name = model.name;
+      view.loaded = object;
+      applyTransformations(model, object);
+      done();
+    }
+
+    loader.load(model.src, loaded, progress, error);
   }
 });
 
@@ -281,6 +336,14 @@ ThreeLoader.types.objmtl = ThreeLoader.extend({
     mtlLoader.load(model.mtl, mtlLoaded, progress, error);
   }
 });
+
+
+
+
+
+
+
+
 
 
 var programmable = require('./programmable');
@@ -419,28 +482,34 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
   },
 
   _renderScene: function() {
-    var view = this;
+    var layer = this;
 
-    view.el.appendChild(view.renderer.domElement);
+    layer.el.appendChild(layer.renderer.domElement);
 
     [
       'geometries',
       'cameras',
       'lights'
     ].forEach(function(collectionName) {
-      view[collectionName] = view[collectionName] || view.renderCollection(view.model[collectionName], function(options) {
-        return new ThreeObject({model: options.model}, {parent: view});
+      layer[collectionName] = layer[collectionName] || layer.renderCollection(layer.model[collectionName], function(options) {
+        return new ThreeObject({model: options.model}, {parent: layer});
       });
     });
 
-    view.loaders = view.loaders || view.renderCollection(view.model.loaders, function(options) {
+    layer.loaders = layer.loaders || layer.renderCollection(layer.model.loaders, function(options) {
       var Constructor = ThreeLoader.types[options.model.type] || ThreeLoader;
-      return new Constructor({model: options.model}, {parent: view});
+      return new Constructor({model: options.model}, {parent: layer});
     });
 
-    view.callSetup();
+    layer.callSetup(function() {
+      console.info(layer.model.name +' all done!');
+    }, {
+      getLoaderViewByName: function(name) {
+        return layer.loaders.views.find(v => v.model.name === name);
+      }
+    });
 
-    return view;
+    return layer;
   },
 
   render: function() {
@@ -477,7 +546,11 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
 
       scene: layer.scene,
 
-      utils: utils
+      utils: utils,
+
+      getLoaderViewByName: function(name) {
+        return layer.loaders.views.find(v => v.model.name === name);
+      }
     });
 
     this.renderer.render(this.scene, this.camera);
