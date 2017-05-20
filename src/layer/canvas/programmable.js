@@ -26,6 +26,8 @@ module.exports = {
       'log',
       'txt',
       'writeThings',
+      'plot',
+      'plotPush',
       'dot',
       'circle',
       'polygone',

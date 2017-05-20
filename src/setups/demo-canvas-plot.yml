@@ -1,0 +1,110 @@
+signals: {}
+mappings: {}
+layers:
+  stat:
+    type: canvas
+    layerStyles: ''
+    updateFunction: >-
+      var cache = layer.cache;
+
+      if (cache.lastframe === frametime) return;
+
+
+
+      cache.frame = cache.frame || 0;
+
+      cache.lastbeat = cache.lastbeat || 0;
+
+      cache.lastframe = cache.lastframe || 0;
+
+      if (beatnum !== cache.lastbeat) {
+        cache.frame = 0;
+        cache.lastbeat = beatnum;
+      }
+
+      else {
+        cache.frame++;
+      }
+
+
+
+      ctx.clearRect(0, 0, width, height);
+
+      var samples = ctx.canvas.width;
+
+      var tv = (frametime % 900000) / 1000;
+
+
+      var lastframetime = (frametime - cache.lastframe) * bpm * (1 / 6000);
+
+      cache.frametimes = Array.isArray(cache.frametimes) ?
+      cache.frametimes.slice(-60) : [];
+
+      cache.frametimes.push(lastframetime);
+
+      var avg = 0;
+
+      cache.frametimes.forEach(v => avg += v);
+
+      avg = avg / cache.frametimes.length;
+
+      plotPush('fps', 0 - avg, samples);
+
+
+      //console.info(avg);
+
+      ctx.fillStyle = 'black';
+
+      ctx.textAlign = 'center';
+
+      ctx.textBaseline = 'middle';
+
+      ctx.font = '45px sans-serif';
+
+      writeThings([
+        avg.toFixed(2),
+        (1000 / (avg * 100)).toFixed(2)
+      ]);
+
+
+      plotPush('algo1', Math.sin(tv) * Math.cos(tv) + Math.sin(tv) * 0.5,
+      samples);
+
+      plotPush('algo2', Math.cos(tv), samples);
+
+      plotPush('algo3', Math.tan(tv), samples);
+
+      plotPush('vol', ((1 / (255 * 0.5)) * vol(32)) - 1, samples);
+
+      plotPush('beatprct', (2 * (beatprct / 100)) - 0.75, samples);
+
+      plotPush('beatnum', ((beatnum % 4) * 0.5) - 1, samples);
+
+      plotPush('frq', ((1 / (255 * 0.25)) * frq(32)) - 1, samples);
+
+      plot([
+        // ['beatprct', 'grey'],
+        // ['beatnum', 'lightgrey'],
+        // ['vol', 'lightblue'],
+        // ['algo1', 'lightgreen'],
+        // ['algo2', 'red'],
+        // ['algo3', 'yellow'],
+        // ['frq', 'green'],
+        ['fps', 'white'],
+      ], samples);
+
+
+      cache.lastframe = frametime;
+    parameters:
+      - name: active
+        type: boolean
+        value: true
+        default: true
+      - name: clear
+        type: number
+        value: 1
+        default: 1
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0

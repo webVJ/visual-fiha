@@ -236,3 +236,31 @@ utils.writeThings = function writeThings(ctx, lines = []) {
   });
 };
 
+utils.plotPush = function plotPush(store, name, value = 0, samples = 50) {
+  store[name] = Array.isArray(store[name]) ? store[name].slice(samples * -1) : [];
+  store[name].push(value);
+};
+
+utils.plot = function makePloter(ctx, store, couples = [], samples = 50) {
+  var hh = ctx.canvas.height * 0.5;
+  var xd = ctx.canvas.width * (1 / samples);
+
+  couples.forEach((couple) => {
+    var name;
+    var color;
+    [
+      name,
+      color
+    ] = couple;
+    var values = (store[name] || []).slice(samples * -1);
+
+    ctx.strokeStyle = color;
+
+    ctx.moveTo(0, hh + (values[0] * hh));
+    ctx.beginPath();
+    values.forEach((value, v) => {
+      ctx.lineTo(xd * v, hh + (value * hh));
+    });
+    ctx.stroke();
+  });
+};

@@ -42,8 +42,6 @@ module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programma
     var layer = this;
     if (!layer.parent || !layer.parent.el) return;
 
-    // ScreenLayerView.prototype.update.apply(this, arguments);
-
     // this ensures the screen has the right size for disblay and computation
     var cw = layer.width = layer.parent.el.clientWidth;
     var ch = layer.height = layer.parent.el.clientHeight;
@@ -52,6 +50,8 @@ module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programma
     var ctx = layer.ctx;
     var clock = layer.model.screenState.clock;
     var audio = layer.model.screenState.audio || {};
+
+    layer.cache = layer.cache || {};
 
     layer.callUpdate({
       frametime: clock.frametime,
@@ -82,6 +82,8 @@ module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programma
       circle: function(...args) { utils.circle(ctx, ...args); },
       polygone: function(...args) { utils.polygone(ctx, ...args); },
       line: function(...args) { utils.line(ctx, ...args); },
+      plotPush: function(...args) { utils.plotPush(layer.cache, ...args); },
+      plot: function(...args) { utils.plot(ctx, layer.cache, ...args); },
       writeThings: function(...args) { utils.writeThings(ctx, ...args); },
       cacheContext: function(...args) { utils.cacheContext(ctx, ...args); },
       restoreContexts: function(...args) { utils.restoreContexts(ctx, ...args); },
