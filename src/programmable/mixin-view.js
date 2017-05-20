@@ -72,7 +72,7 @@ module.exports = function programmableView(config, prototype = {}) {
     view._ready = false;
     ready = typeof ready === 'function' ? ready : function() {};
     var args = zipArgs(setup.argNames, options).concat([function(error) {
-      if (error) console.warn('setup error: %s', error.message);
+      if (error) console.warn('%s: setup error: %s', view.model.name, error.message);
       view._ready = !error;
       ready(error);
     }]);
@@ -81,7 +81,7 @@ module.exports = function programmableView(config, prototype = {}) {
       fn.apply(view, args);
     }
     catch (e) {
-      console.log('%c callSetup error: %s', 'color:red', e.message);
+      console.log('%c%s callSetup error: %s', 'color:red', view.model.name, e.message);
     }
   };
 
