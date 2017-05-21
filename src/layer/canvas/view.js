@@ -59,6 +59,7 @@ module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programma
       beatnum: clock.beatnum,
       beatprct: clock.beatprct,
       beatlength: clock.beatlength,
+      latency: clock.latency,
 
       bufferLength: function() { return audio.bufferLength || 128; },
       vol: function(x) {

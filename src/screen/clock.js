@@ -28,6 +28,10 @@ var Clock = State.extend({
     return this;
   },
 
+  session: {
+    latency: ['number', true, 0]
+  },
+
   props: {
     pausetime: ['number', true, 0],
     starttime: ['number', true, Date.now],

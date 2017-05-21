@@ -70,6 +70,10 @@ var AppRouter = require('ampersand-router').extend({
     var payload = evt.data.payload || {};
 
     switch (command) {
+      case 'latencyCheck':
+        screen.clock.latency = Date.now() - payload.origin;
+        break;
+
       case 'bootstrap':
         layers.reset(payload.layers || []);
         break;
@@ -248,6 +252,10 @@ var AppRouter = require('ampersand-router').extend({
       mappings: router.mappings,
       el: options.el
     });
+
+    router.latencyCheck = setInterval(function() {
+      router.sendCommand('latencyCheck', {origin: Date.now()});
+    }, 1000);
   },
 
   sendCommand: function(name, payload, callback) {

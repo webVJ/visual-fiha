@@ -198,6 +198,10 @@ channel.addEventListener('message', function(evt) {
  * Worker commands                                    *
 \******************************************************/
 var commands = {
+  latencyCheck: function(origin) {
+    broadcastCommand('latencyCheck', {origin: origin});
+  },
+
   play: function() {
     worker.screen.clock.play();
   },

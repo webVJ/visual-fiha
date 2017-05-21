@@ -10,6 +10,7 @@ module.exports = {
       'beatnum',
       'beatprct',
       'beatlength',
+      'latency',
 
       'bufferLength',
       'vol',

@@ -38,6 +38,9 @@ function registerCommand(commandName, command) {
 
 
 var commands = {
+  latencyCheck: function latencyCheck(origin) {
+    this.model.clock.latency = Date.now() - origin;
+  },
   bootstrap: function bootstrap(layers) {
     this.model.layers.reset(layers);
     this.resize();
