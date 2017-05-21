@@ -274,22 +274,25 @@ var ScreenView = View.extend(clientMixin, {
   },
 
   _updateAudio: function() {
-    var audio = this.model.audio;
-    if (!audio || !audio.frequency || !audio.timeDomain) return this;
-    var length = audio.frequency.length;
-    var l, li = 0, af = 0, av = 0, ll = 1;
+    var view = this;
+    setTimeout(function() {
+      var audio = view.model.audio;
+      if (!audio || !audio.frequency || !audio.timeDomain) return this;
+      var length = audio.frequency.length;
+      var l, li = 0, af = 0, av = 0, ll = 1;
 
-    for (l = 0; l < length; l += ll) {
-      li++;
-      af += audio.frequency[l];
-      av += audio.timeDomain[l];
-      this.setProperty('--frq' + li, audio.frequency[l]);
-      this.setProperty('--vol' + li, audio.timeDomain[l]);
-    }
+      for (l = 0; l < length; l += ll) {
+        li++;
+        af += audio.frequency[l];
+        av += audio.timeDomain[l];
+        view.setProperty('--frq' + li, audio.frequency[l]);
+        view.setProperty('--vol' + li, audio.timeDomain[l]);
+      }
 
-    this.setProperty('--frq', af / length);
-    this.setProperty('--vol', av / length);
-    return this;
+      view.setProperty('--frq', af / length);
+      view.setProperty('--vol', av / length);
+    }, 0);
+    return view;
   },
 
   _updateLayers: function() {
