@@ -32,9 +32,8 @@ module.exports = require('ampersand-view').extend({
     }
   },
 
-  drawScales: function(/*bufferLength*/) {
-    var source = this.parent;
-    var analyser = source.parent.audioAnalyser;
+  drawScales: function() {
+    var analyser = this.model.analyser;
     var bufferLength = analyser.frequencyBinCount;
     var ctx = this.ctx;
     var x = ctx.canvas.width * 0.5;
@@ -93,22 +92,20 @@ module.exports = require('ampersand-view').extend({
       return this;
     }
 
-    var source = this.parent;
-
     var ctx = this.ctx;
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = ctx.strokeStyle = this.color;
 
-    var analyser = source.parent.audioAnalyser;
+    var analyser = this.model.analyser;
     var bufferLength = analyser.frequencyBinCount;
     this.drawScales(bufferLength);
 
-    var freqArray = source.parent.audioFrequencyArray;
+    var freqArray = this.model.frequencyArray;
     analyser.getByteFrequencyData(freqArray);
 
-    var timeDomainArray = source.parent.audioTimeDomainArray;
+    var timeDomainArray = this.model.timeDomainArray;
     analyser.getByteTimeDomainData(timeDomainArray);
 
     var x = width * 0.5;

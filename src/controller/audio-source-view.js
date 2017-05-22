@@ -12,9 +12,9 @@ var AudioSource = View.extend({
       <div class="row columns">
         <div class="column audio-monitor"></div>
         <div class="column audio-controls">
-          <label>MinDb: <input type="range" name="minDecibels" value="-90" min="-200" max="-11" step="1" /></label>
-          <label>MaxDb: <input type="range" name="maxDecibels" value="-10" min="-70" max="120" step="1" /></label>
-          <label>Smoothing: <input type="range" name="smoothingTimeConstant" min="0" max="1" value="0.85" step="0.01" /></label>
+          <label>MinDb: <input type="range" name="minDecibels" min="-200" max="-11" step="1" /></label>
+          <label>MaxDb: <input type="range" name="maxDecibels" min="-70" max="120" step="1" /></label>
+          <label>Smoothing: <input type="range" name="smoothingTimeConstant" min="0" max="1" step="0.01" /></label>
           <label>FftSize: <select type="number" name="fftSize" value="32" step="2">
             <option value="32">32</option>
             <option value="64">64</option>
@@ -29,31 +29,23 @@ var AudioSource = View.extend({
   `,
 
   initialize: function() {
-    this.listenToAndRun(this, 'change:audioContext change:audioAnalyser', this.connectAudioSource);
+    this.listenToAndRun(this, 'change:audio.context change:audio.analyser', this.connectAudioSource);
   },
 
-  // session: {
-  //   minDecibels: ['number', true, -90],
-  //   maxDecibels: ['number', true, -10],
-  //   smoothingTimeConstant: ['number', true, 0.85],
-  //   fftSize: ['number', true, 256],
-  //   audioAnalyser: 'any'
-  // },
-
   bindings: {
-    'parent.minDecibels': {
+    'model.minDecibels': {
       selector: '[name="minDecibels"]',
       type: 'value'
     },
-    'parent.maxDecibels': {
+    'model.maxDecibels': {
       selector: '[name="maxDecibels"]',
       type: 'value'
     },
-    'parent.smoothingTimeConstant': {
+    'model.smoothingTimeConstant': {
       selector: '[name="smoothingTimeConstant"]',
       type: 'value'
     },
-    'parent.fftSize': {
+    'model.fftSize': {
       selector: '[name="fftSize"]',
       type: 'value'
     }
@@ -70,7 +62,7 @@ var AudioSource = View.extend({
       prepareView: function(el) {
         var view = new AudioMonitor({
           color: this.color,
-          audioAnalyser: this.parent.audioAnalyser,
+          model: this.model,
           parent: this
         });
         el.appendChild(view.el);
@@ -84,15 +76,15 @@ var AudioSource = View.extend({
     'change .audio-source [name]': '_changeAudioParams'
   },
 
-  connectAudioSource: function() {
+  _connectMicrophone: function() {
     var view = this;
     var capture = {
       audio: true
     };
 
     function success(stream) {
-      var source = view.parent.audioContext.createMediaStreamSource(stream);
-      source.connect(view.parent.audioAnalyser);
+      var source = view.model.context.createMediaStreamSource(stream);
+      source.connect(view.model.analyser);
     }
     function error(err) {
       console.warn(err);
@@ -104,12 +96,16 @@ var AudioSource = View.extend({
     else if (navigator.getUserMedia) {
       navigator.getUserMedia(capture, success, error);
     }
+    return this;
+  },
 
+  connectAudioSource: function() {
+    this._connectMicrophone();
     return this;
   },
 
   _changeAudioParams: function(evt) {
-    this.parent.set(evt.target.name, Number(evt.target.value));
+    this.model.set(evt.target.name, Number(evt.target.value));
   },
 
   update: function() {

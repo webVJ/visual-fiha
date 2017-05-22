@@ -15,12 +15,27 @@ var fromYaml = require('./../utils/yaml-to-setup');
 var toYaml = require('./../utils/setup-to-yaml');
 var ControlScreenControls = require('./control-screen-controls-view');
 // var Timeline = require('./timeline-view');
-
-
-
-
+var AudioState = require('./audio-state');
 
 var ControllerView = View.extend({
+  children: {
+    audio: AudioState
+  },
+
+  session: {
+    _arId: 'number',
+    broadcastId: ['string', true, 'vfBus'],
+    currentEditor: 'state',
+    currentDetails: 'state',
+    playing: ['boolean', true, false],
+    router: 'any',
+    showControlScreen: ['boolean', true, false],
+    controlScreenWidth: ['number', true, 400],
+    controlScreenHeight: ['number', true, 300],
+    smoothingTimeConstant: ['number', true, 0.85],
+    workerPerformance: 'string'
+  },
+
   initialize: function(options) {
     var controllerView = this;
     this.signals = options.signals;
@@ -33,19 +48,6 @@ var ControllerView = View.extend({
     this.listenTo(this.router, 'all', function(...args) {
       if (args[0].indexOf('app:') === 0) this.trigger(...args);
     });
-
-    [
-      'minDecibels',
-      'maxDecibels',
-      'smoothingTimeConstant',
-      'fftSize'
-    ].forEach(function(name) {
-      controllerView.on('change:' + name, function () {
-        if (!controllerView.audioAnalyser) return;
-        controllerView.audioAnalyser[name] = controllerView[name];
-      });
-    }, controllerView);
-
 
     controllerView._animate();
 
@@ -85,22 +87,25 @@ var ControllerView = View.extend({
   },
 
   _animate: function() {
-    if (this.audioSource) {
-      this.audioSource.update();
+    var controllerView = this;
+    if (controllerView.audioSource) {
+      controllerView.audioSource.update();
     }
 
-    this.update();
+    controllerView.update();
 
-    this._arId = window.requestAnimationFrame(this._animate.bind(this));
+    controllerView._arId = window.requestAnimationFrame(function() {
+      controllerView._animate();
+    });
   },
 
   update: function() {
-    var analyser = this.audioAnalyser;
+    var analyser = this.audio.analyser;
 
-    var freqArray = this.audioFrequencyArray;
+    var freqArray = this.audio.frequencyArray;
     analyser.getByteFrequencyData(freqArray);
 
-    var timeDomainArray = this.audioTimeDomainArray;
+    var timeDomainArray = this.audio.timeDomainArray;
     analyser.getByteTimeDomainData(timeDomainArray);
 
     var command = {
@@ -115,61 +120,12 @@ var ControllerView = View.extend({
   },
 
   derived: {
-    audioContext: {
-      deps: [],
-      fn: function() {
-        return new window.AudioContext();
-      }
-    },
-    audioAnalyser: {
-      deps: ['audioContext'],
-      fn: function() {
-        var analyser = this.audioContext.createAnalyser();
-        try {
-          analyser.minDecibels = this.minDecibels;
-          analyser.maxDecibels = this.maxDecibels;
-          analyser.smoothingTimeConstant = this.smoothingTimeConstant;
-          analyser.fftSize = this.fftSize;
-        }
-        catch (e) {}
-        return analyser;
-      }
-    },
-    audioFrequencyArray: {
-      deps: ['audioAnalyser', 'fftSize'],
-      fn: function () {
-        return new window.Uint8Array(this.audioAnalyser.frequencyBinCount);
-      }
-    },
-    audioTimeDomainArray: {
-      deps: ['audioAnalyser', 'fftSize'],
-      fn: function () {
-        return new window.Uint8Array(this.audioAnalyser.frequencyBinCount);
-      }
-    },
     computedStyle: {
       deps: ['el'],
       fn: function() {
         return window.getComputedStyle(this.el);
       }
     }
-  },
-
-  session: {
-    _arId: 'number',
-    broadcastId: ['string', true, 'vfBus'],
-    currentEditor: 'state',
-    currentDetails: 'state',
-    fftSize: ['number', true, 256],
-    maxDecibels: ['number', true, -10],
-    minDecibels: ['number', true, -90],
-    playing: ['boolean', true, false],
-    router: 'any',
-    showControlScreen: ['boolean', true, false],
-    controlScreenWidth: ['number', true, 400],
-    controlScreenHeight: ['number', true, 300],
-    smoothingTimeConstant: ['number', true, 0.85],
-    workerPerformance: 'string'
   },
 
   play: function() {
@@ -342,7 +298,7 @@ var ControllerView = View.extend({
 
         function buildAudioSource() {
           parent.audioSource = new AudioSource({
-            audioAnalyser: parent.audioAnalyser,
+            model: parent.audio,
             parent: parent,
             color: styles.color
           });
