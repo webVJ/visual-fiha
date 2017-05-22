@@ -11,6 +11,7 @@ module.exports = {
       'beatprct',
       'beatlength',
       'latency',
+      'fps',
 
       'bufferLength',
       'vol',

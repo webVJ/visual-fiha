@@ -121,13 +121,17 @@ var ScreenView = View.extend(clientMixin, {
     captureDebug: ['boolean', true, false]
   },
 
+  _frames: 0,
+  fps: 0,
+
   initialize: function () {
-    if (!this.model) {
+    var view = this;
+    if (!view.model) {
       throw new Error('Missing model option for ScreenView');
     }
-    this.initializeClient();
+    view.initializeClient();
 
-    var clock = this.model.clock;
+    var clock = view.model.clock;
     [
       'frametime',
       'bpm',
@@ -135,12 +139,16 @@ var ScreenView = View.extend(clientMixin, {
       'beatnum',
       'beatprct'
     ].forEach(function(propName) {
-      this.listenToAndRun(clock, 'change:' + propName, function() {
-        this.setProperty('--' + propName, clock.get(propName));
+      view.listenToAndRun(clock, 'change:' + propName, function() {
+        view.setProperty('--' + propName, clock.get(propName));
       });
-    }, this);
+    }, view);
 
-    this.listenToAndRun(this.model, 'change:audio', this._updateAudio);
+    view.listenToAndRun(view.model, 'change:audio', view._updateAudio);
+    view._fpsInterval = setInterval(function() {
+      view.fps = view.frames * 4;
+      view.frames = 0;
+    }, 1000 / 4);
   },
 
   derived: {
@@ -201,6 +209,7 @@ var ScreenView = View.extend(clientMixin, {
     if (this.channel) {
       this.channel.close();
     }
+    clearInterval(this._fpsInterval);
     return View.prototype.remove.apply(this, arguments);
   },
 
@@ -262,16 +271,12 @@ var ScreenView = View.extend(clientMixin, {
     return this;
   },
 
-  // _prev: null,
   _ar: null,
   _animate: function() {
-    // var timestamp = arguments[0];
-    // if (this.prev) console.info('screen last frame duration', (timestamp - this.prev).toFixed(4));
-    // this.prev = timestamp;
-
     var view = this;
     view._updateLayers();
     view._ar = window.requestAnimationFrame(function(timestamp) {
+      view.frames++;
       view._animate(timestamp);
     });
   },

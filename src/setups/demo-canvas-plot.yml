@@ -37,19 +37,7 @@ layers:
 
       var tv = (frametime % 900000) / 1000;
 
-
-      var lastframetime = (frametime - cache.lastframe) * bpm * (1 / 6000);
-
-      cache.frametimes = Array.isArray(cache.frametimes) ?
-      cache.frametimes.slice(-60) : [];
-
-      cache.frametimes.push(lastframetime);
-
-      var avg = cache.frametimes.reduce((v, c) => v += c, 0);
-
-      avg = avg / cache.frametimes.length;
-
-      plotPush('fps', 0 - avg, samples);
+      plotPush('fps', fps, samples);
 
 
       //console.info(avg);
@@ -65,9 +53,8 @@ layers:
       ctx.font = '45px sans-serif';
 
       writeThings([
-        avg.toFixed(2),
-        (1000 / (avg * 100)).toFixed(2),
-        latency
+        fps + 'fps',
+        latency + 'ms'
       ]);
 
 
