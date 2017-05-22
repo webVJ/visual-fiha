@@ -45,11 +45,14 @@ var LayersView = View.extend({
   },
 
   render: function() {
+    var collection = this.collection;
     LayerControlView.prototype.render.apply(this, arguments);
-    this.items = this.renderCollection(this.collection, function (opts) {
+    this.items = this.renderCollection(collection, function (opts) {
       var type = opts.model.getType();
       var Constructor = LayerControlView.types[type] || LayerControlView;
-      return new Constructor(opts);
+      var view = new Constructor(opts);
+      view.on('change:model.zIndex', function() { collection.sort(); });
+      return view;
     }, '.items');
     return this;
   },
