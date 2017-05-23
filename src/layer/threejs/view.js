@@ -109,7 +109,6 @@ var ThreeObject = State.extend({
 
   remove: function() {
     var object = this.object;
-    console.info('remove object', !!object);
     if (object) object.remove();
     if (State.prototype.remove) State.prototype.remove.apply(this, arguments);
     return this;
