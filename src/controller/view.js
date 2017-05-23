@@ -296,15 +296,11 @@ var ControllerView = View.extend({
           return parent.signalsView;
         }
 
-        function buildAudioSource() {
-          parent.audioSource = new AudioSource({
-            model: parent.audio,
-            parent: parent,
-            color: styles.color
-          });
-          return parent.audioSource;
-        }
-        buildAudioSource();
+        parent.audioSource = new AudioSource({
+          model: parent.audio,
+          parent: parent,
+          color: styles.color
+        });
 
         if (parent.midi) {
           parent.MIDIAccess = new MIDIAccessView({
@@ -321,7 +317,7 @@ var ControllerView = View.extend({
             {name: 'Layers', rebuild: buildLayers, pinned: true, active: true},
             {name: 'Signals', rebuild: buildSignals, pinned: true},
             {name: 'MIDI', view: parent.MIDIAccess, pinned: true},
-            {name: 'Audio', rebuild: buildAudioSource, pinned: true}
+            {name: 'Audio', view: parent.audioSource, pinned: true}
           ]
         });
 

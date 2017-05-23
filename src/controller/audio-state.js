@@ -1,8 +1,10 @@
 'use strict';
-
 var State = require('ampersand-state');
+
 var AudioState = State.extend({
   props: {
+    // stream: ['string', false, 'http://46.163.116.101:9000/stream-low'],
+    stream: ['string', false, ''],
     fftSize: ['number', true, 256],
     maxDecibels: ['number', true, -10],
     minDecibels: ['number', true, -90],
@@ -25,9 +27,28 @@ var AudioState = State.extend({
         }
       });
     }, this);
+    this.on('change:stream', function() {
+      this.audioElement.src = this.stream;
+    });
+    if (this.stream) this.audioElement.src = this.stream;
   },
 
   derived: {
+    audioElement: {
+      deps: [],
+      fn: function() {
+        var id = 'vf-audio-stream';
+        var el = document.getElementById(id);
+        if (!el) {
+          el = document.createElement('audio');
+          el.id = id;
+          el.style.display = 'none';
+          el.crossOrigin = 'anonymous';
+          document.body.appendChild(el);
+        }
+        return el;
+      }
+    },
     context: {
       deps: [],
       fn: function() {
