@@ -1,15 +1,15 @@
 'use strict';
-var View = require('./control-view');
-var AudioMonitor = require('./audio-monitor-view');
+var View = require('./../control-view');
+var AudioMonitor = require('./monitor-view');
 
 /*
 :sout=#http{mux=raw,dst=:8080/stream} :sout-keep
 :sout=#http{dst=:8080/stream} :sout-keep
 */
 
-function makeLog(name) {
-  return function(...args){console.info('audio event %s', name, ...args);};
-}
+// function makeLog(name) {
+//   return function(...args){console.info('audio event %s', name, ...args);};
+// }
 var AudioSource = View.extend({
   autoRender: true,
 
@@ -60,66 +60,61 @@ var AudioSource = View.extend({
   `,
 
   initialize: function() {
-    this.on('change:model.context change:model.analyser', this.connectAudioSource);
-    this._bindAudioEvents().connectAudioSource();
+    this.on('change:model.stream', this.connectAudioSource);
+    this.connectAudioSource();
+    // this._bindAudioEvents().connectAudioSource();
   },
 
 
-  _bindAudioEvents: function() {
-    this._unbindAudioEvents();
-    var fns = this._audioEvents;
+  // _bindAudioEvents: function() {
+  //   this._unbindAudioEvents();
+  //   var fns = this._audioEvents;
 
-    Object.keys(this.audioEvents).forEach(function(name) {
-      fns[name] = this.audioEvents[name].bind(this);
-    }, this);
+  //   Object.keys(this.audioEvents).forEach(function(name) {
+  //     fns[name] = this.audioEvents[name].bind(this);
+  //   }, this);
 
-    Object.keys(fns).forEach(function(name) {
-      this.model.audioElement.addEventListener(name, fns[name], false);
-    }, this);
-    return this;
-  },
+  //   Object.keys(fns).forEach(function(name) {
+  //     this.model.audioElement.addEventListener(name, fns[name], false);
+  //   }, this);
+  //   return this;
+  // },
 
-  _unbindAudioEvents: function() {
-    var fns = this._audioEvents || {};
-    Object.keys(fns).forEach(function(name) {
-      this.model.audioElement.removeEventListener(name, fns[name], false);
-    }, this);
-    this._audioEvents = {};
-    return this;
-  },
+  // _unbindAudioEvents: function() {
+  //   var fns = this._audioEvents || {};
+  //   Object.keys(fns).forEach(function(name) {
+  //     this.model.audioElement.removeEventListener(name, fns[name], false);
+  //   }, this);
+  //   this._audioEvents = {};
+  //   return this;
+  // },
 
 
-  _handleAudioEvent: function(evt) {
-    console.info('%caudio %s event', 'color:lightblue', evt.type, this);
-    // var fn = this.audioEvents[evt.type];
-    // fn.call(this, evt);
-  },
-
-  audioEvents: {
-    'play': makeLog('play'),
-    // 'playing': makeLog('playing'),
-    'ended': makeLog('ended'),
-    error: function() {
-      var error = this.model.audioElement.error;
-      console.error('audio error (%s):', [
-        'aborted',
-        'network',
-        'decode',
-        'not supported'
-      ][error.code - 1]);
-    },
-    // 'loadeddata': makeLog('loadeddata'),
-    'loadstart': makeLog('loadstart'),
-    'pause': makeLog('pause'),
-    // 'progress': makeLog('progress'),
-    // 'seeked': makeLog('seeked'),
-    // 'seeking': makeLog('seeking'),
-    // 'durationchange': makeLog('durationchange'),
-    canplay: function() {
-      this.model.audioElement.play();
-    },
-    // 'canplaythrough': makeLog('canplaythrough'),
-  },
+  // audioEvents: {
+  //   'play': makeLog('play'),
+  //   // 'playing': makeLog('playing'),
+  //   'ended': makeLog('ended'),
+  //   error: function() {
+  //     var error = this.model.audioElement.error;
+  //     console.error('audio error (%s):', [
+  //       'aborted',
+  //       'network',
+  //       'decode',
+  //       'not supported'
+  //     ][error.code - 1]);
+  //   },
+  //   // 'loadeddata': makeLog('loadeddata'),
+  //   'loadstart': makeLog('loadstart'),
+  //   'pause': makeLog('pause'),
+  //   // 'progress': makeLog('progress'),
+  //   // 'seeked': makeLog('seeked'),
+  //   // 'seeking': makeLog('seeking'),
+  //   // 'durationchange': makeLog('durationchange'),
+  //   canplay: function() {
+  //     this.model.audioElement.play();
+  //   },
+  //   // 'canplaythrough': makeLog('canplaythrough'),
+  // },
 
 
   bindings: {
@@ -201,7 +196,7 @@ var AudioSource = View.extend({
     var analyser = this.model.analyser;
     var context = this.model.context;
     var gainNode = context.createGain();
-    var source = context.createMediaElementSource(this.model.audioElement);
+    var source = this.model.audioSource;
     source.connect(gainNode);
     source.connect(analyser);
     gainNode.connect(context.destination);
@@ -222,10 +217,10 @@ var AudioSource = View.extend({
   update: function() {
     if (!this.monitor) return;
     this.monitor.update();
-  },
+  // },
 
-  remove: function() {
-    View.prototype.remove.apply(this._unbindAudioEvents(), arguments);
+  // remove: function() {
+  //   View.prototype.remove.apply(this._unbindAudioEvents(), arguments);
   }
 });
 module.exports = AudioSource;

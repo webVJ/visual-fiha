@@ -3,8 +3,8 @@ var State = require('ampersand-state');
 
 var AudioState = State.extend({
   props: {
-    // stream: ['string', false, 'http://46.163.116.101:9000/stream-low'],
-    stream: ['string', false, ''],
+    stream: ['string', false, 'http://46.163.116.101:9000/stream-low'],
+    // stream: ['string', false, ''],
     fftSize: ['number', true, 256],
     maxDecibels: ['number', true, -10],
     minDecibels: ['number', true, -90],
@@ -27,10 +27,56 @@ var AudioState = State.extend({
         }
       });
     }, this);
+
+    this._bindAudioEvents();
     this.on('change:stream', function() {
-      this.audioElement.src = this.stream;
+      this.audioElement.src = this.stream || '';
     });
+
     if (this.stream) this.audioElement.src = this.stream;
+  },
+
+  _bindAudioEvents: function() {
+    var state = this;
+    state._unbindAudioEvents();
+    var fns = state._audioEvents;
+
+    Object.keys(state.audioEvents).forEach(function(name) {
+      fns[name] = function(evt) {
+        console.info('event', name, evt.type);
+        state.trigger('audio:' + name, evt);
+        state.audioEvents[name].call(state, evt);
+      };
+    });
+
+    Object.keys(fns).forEach(function(name) {
+      state.audioElement.addEventListener(name, fns[name], false);
+    });
+    return state;
+  },
+
+  _unbindAudioEvents: function() {
+    var fns = this._audioEvents || {};
+    Object.keys(fns).forEach(function(name) {
+      this.audioElement.removeEventListener(name, fns[name], false);
+    }, this);
+    this._audioEvents = {};
+    return this;
+  },
+
+  audioEvents: {
+    error: function() {
+      var error = this.audioElement.error;
+      console.error('audio error (%s):', [
+        'aborted',
+        'network',
+        'decode',
+        'not supported'
+      ][error.code - 1]);
+    },
+    canplay: function() {
+      this.audioElement.play();
+    }
   },
 
   derived: {
@@ -53,6 +99,12 @@ var AudioState = State.extend({
       deps: [],
       fn: function() {
         return new window.AudioContext();
+      }
+    },
+    audioSource: {
+      deps: ['audioElement', 'context'],
+      fn: function() {
+        return this.context.createMediaElementSource(this.audioElement);
       }
     },
     analyser: {

@@ -4,7 +4,7 @@ var MIDIAccessView = require('./../midi/view');
 var SignalsView = require('./../signal/signals-view');
 var LayersView = require('./../layer/layers-view');
 var SuggestionView = require('./suggestion-view');
-var AudioSource = require('./audio-source-view');
+var AudioSource = require('./audio/source-view');
 var AceEditor = require('./ace-view');
 var ClockView = require('./clock-view');
 var RegionView = require('./region-view');
@@ -15,7 +15,7 @@ var fromYaml = require('./../utils/yaml-to-setup');
 var toYaml = require('./../utils/setup-to-yaml');
 var ControlScreenControls = require('./control-screen-controls-view');
 // var Timeline = require('./timeline-view');
-var AudioState = require('./audio-state');
+var AudioState = require('./audio/state');
 
 var ControllerView = View.extend({
   children: {

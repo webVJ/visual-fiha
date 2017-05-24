@@ -1,5 +1,5 @@
 'use strict';
-var pad = require('./../utils/pad');
+var pad = require('./../../utils/pad');
 module.exports = require('ampersand-view').extend({
   autoRender: true,
   template: '<canvas width="200" height="200"></canvas>',
