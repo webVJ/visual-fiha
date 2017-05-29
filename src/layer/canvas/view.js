@@ -5,6 +5,8 @@ var ScreenLayerView = require('./../view');
 var programmableMixin = require('./../../programmable/mixin-view');
 var programmable = require('./programmable');
 var utils = require('./canvas-utils');
+var loaders = require('./scripts/loaders');
+
 module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programmableMixin(programmable, {
   template: function() {
     return '<canvas id="' + this.model.getId() + '" view-id="' + this.cid + '"></canvas>';
@@ -48,30 +50,10 @@ module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programma
 
     if (!layer.model.active) return layer;
     var ctx = layer.ctx;
-    var clock = layer.model.screenState.clock;
-    var audio = layer.model.screenState.audio || {};
 
     layer.cache = layer.cache || {};
 
     layer.callUpdate({
-      frametime: clock.frametime,
-      bpm: clock.bpm,
-      beatnum: clock.beatnum,
-      beatprct: clock.beatprct,
-      beatlength: clock.beatlength,
-      latency: clock.latency,
-      fps: layer.parent.fps,
-
-      bufferLength: function() { return audio.bufferLength || 128; },
-      vol: function(x) {
-        return (audio.timeDomain || [])[x] || 0;
-      },
-      frq: function(x) {
-        return (audio.frequency || [])[x] || 0;
-      },
-
-      param: function(...args) { return layer.model.parameters.getValue(...args); },
-
       ctx: ctx,
       utils: utils,
 
@@ -89,6 +71,12 @@ module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programma
       writeThings: function(...args) { utils.writeThings(ctx, ...args); },
       cacheContext: function(...args) { utils.cacheContext(ctx, ...args); },
       restoreContexts: function(...args) { utils.restoreContexts(ctx, ...args); },
+      loadImage: function(src, done) {
+        loaders.img(src, done);
+      },
+      loadVideo: function(src, done) {
+        loaders.video(src, done);
+      },
     });
 
     layer.frames++;
