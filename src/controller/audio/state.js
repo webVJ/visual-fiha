@@ -3,8 +3,8 @@ var State = require('ampersand-state');
 
 var AudioState = State.extend({
   props: {
-    stream: ['string', false, 'http://46.163.116.101:9000/stream-low'],
-    // stream: ['string', false, ''],
+    // stream: ['string', false, 'http://46.163.116.101:9000/stream-low'],
+    stream: ['string', false, ''],
     fftSize: ['number', true, 256],
     maxDecibels: ['number', true, -10],
     minDecibels: ['number', true, -90],
