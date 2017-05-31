@@ -92,6 +92,9 @@ clientMixin.initializeClient = function initializeClient() {
 
     command.apply(follower, commandArgs);
     follower.model.trigger('app:broadcast:' + commandName, evt.data.payload);
+  }, {
+    capture: false,
+    passive: true
   });
 
   this.channel = channel;

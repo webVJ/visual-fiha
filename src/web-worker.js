@@ -190,6 +190,9 @@ channel.addEventListener('message', function(evt) {
   }
 
   screens[payload.id] = payload.id;
+}, {
+  capture: false,
+  passive: true
 });
 
 

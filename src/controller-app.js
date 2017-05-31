@@ -222,9 +222,15 @@ var AppRouter = require('ampersand-router').extend({
 
     router.broadcastChannel = new BroadcastChannel('spike');
 
-    router.broadcastChannel.addEventListener('message', this._handleBroadcastMessages.bind(this));
+    router.broadcastChannel.addEventListener('message', this._handleBroadcastMessages.bind(this), {
+      capture: false,
+      passive: true
+    });
 
-    router.worker.addEventListener('message', this._handleWorkerMessages.bind(this));
+    router.worker.addEventListener('message', this._handleWorkerMessages.bind(this), {
+      capture: false,
+      passive: true
+    });
 
     var midi = router.midi = (router.midi || new MIDIAccessState({}));
 
@@ -265,18 +271,23 @@ var AppRouter = require('ampersand-router').extend({
       payload: payload
     };
 
+    var listenerOptions = {
+      passive: true,
+      capture: false
+    };
+
     function makeListener(id, done) {
       function eventListener(evt) {
         if (evt.data.eventId !== id) return;
         done(null, evt.data.payload);
-        worker.removeEventListener('message', eventListener);
+        worker.removeEventListener('message', eventListener, listenerOptions);
       }
       return eventListener;
     }
 
     if (callback) {
       message.eventId = auid();
-      worker.addEventListener('message', makeListener(message.eventId, callback));
+      worker.addEventListener('message', makeListener(message.eventId, callback), listenerOptions);
     }
     worker.postMessage(message);
   },
