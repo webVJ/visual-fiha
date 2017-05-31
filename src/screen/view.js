@@ -126,6 +126,7 @@ var ScreenView = View.extend(clientMixin, {
 
   _frames: 0,
   fps: 0,
+  usedHeap: performance.memory.usedJSHeapSize,
 
   initialize: function () {
     var view = this;
@@ -134,21 +135,8 @@ var ScreenView = View.extend(clientMixin, {
     }
     view.initializeClient();
 
-    var clock = view.model.clock;
-    [
-      'frametime',
-      'bpm',
-      'beatlength',
-      'beatnum',
-      'beatprct'
-    ].forEach(function(propName) {
-      view.listenToAndRun(clock, 'change:' + propName, function() {
-        view.setProperty('--' + propName, clock.get(propName));
-      });
-    }, view);
-
-    view.listenToAndRun(view.model, 'change:audio', view._updateAudio);
     view._fpsInterval = setInterval(function() {
+      view.usedHeap = performance.memory.usedJSHeapSize;
       view.fps = view.frames * 4;
       view.frames = 0;
     }, 1000 / 4);
@@ -205,6 +193,7 @@ var ScreenView = View.extend(clientMixin, {
   },
 
   setProperty: function(...args) {
+    // if (localStorage.noCSS) return;
     this.cssRule.style.setProperty(...args);
   },
 
@@ -277,32 +266,50 @@ var ScreenView = View.extend(clientMixin, {
   _ar: null,
   _animate: function() {
     var view = this;
-    view._updateLayers();
-    view._ar = window.requestAnimationFrame(function(timestamp) {
+    view._ar = window.requestAnimationFrame(function() {
+      view
+        ._updateAudio()
+        ._updateClock()
+        ._updateLayers();
+
       view.frames++;
-      view._animate(timestamp);
+      // view._ar = null;
+      view._animate();
     });
+  },
+
+  _updateClock: function() {
+    var view = this;
+    var clock = view.model.clock;
+    [
+      'frametime',
+      'bpm',
+      'beatlength',
+      'beatnum',
+      'beatprct'
+    ].forEach(function(propName) {
+      view.setProperty('--' + propName, clock.get(propName));
+    });
+    return view;
   },
 
   _updateAudio: function() {
     var view = this;
-    setTimeout(function() {
-      var audio = view.model.audio;
-      if (!audio || !audio.frequency || !audio.timeDomain) return this;
-      var length = audio.frequency.length;
-      var l, li = 0, af = 0, av = 0, ll = 1;
+    var audio = view.model.audio;
+    if (!audio || !audio.frequency || !audio.timeDomain) return this;
+    var length = audio.frequency.length;
+    var l, li = 0, af = 0, av = 0, ll = 1;
 
-      for (l = 0; l < length; l += ll) {
-        li++;
-        af += audio.frequency[l];
-        av += audio.timeDomain[l];
-        view.setProperty('--frq' + li, audio.frequency[l]);
-        view.setProperty('--vol' + li, audio.timeDomain[l]);
-      }
+    for (l = 0; l < length; l += ll) {
+      li++;
+      af += audio.frequency[l];
+      av += audio.timeDomain[l];
+      view.setProperty('--frq' + li, audio.frequency[l]);
+      view.setProperty('--vol' + li, audio.timeDomain[l]);
+    }
 
-      view.setProperty('--frq', af / length);
-      view.setProperty('--vol', av / length);
-    }, 0);
+    view.setProperty('--frq', af / length);
+    view.setProperty('--vol', av / length);
     return view;
   },
 

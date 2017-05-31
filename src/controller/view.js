@@ -65,8 +65,6 @@ var ControllerView = View.extend({
     controllerView.listenTo(controllerView.model.layers, 'sendCommand', function(...args) {
       controllerView.sendCommand(...args);
     });
-
-    this._animate();
   },
 
   midiSources: function() {
