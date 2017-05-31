@@ -234,6 +234,10 @@ var commands = {
       signals: worker.signals.toJSON(),
       mappings: worker.mappings.toJSON(),
       audio: {
+        stream: worker.stream || ''
+      },
+      clock: {
+        bpm: worker.screen.clock.bpm
       }
     };
 
@@ -253,6 +257,8 @@ var commands = {
           worker.layers.reset(setup.layers);
           worker.signals.reset(setup.signals);
           worker.mappings.reset(setup.mappings);
+          worker.stream = (setup.audio || {}).stream || '';
+          worker.screen.clock.bpm = (setup.clock || {}).bpm || 120;
 
           broadcastCommand('bootstrap', {layers: setup.layers});
           emitCommand('storageLoad', {setup: setup, setupId: setupId});
@@ -267,6 +273,8 @@ var commands = {
     worker.layers.reset(setup.layers);
     worker.signals.reset(setup.signals);
     worker.mappings.reset(setup.mappings);
+    worker.stream = (setup.audio || {}).stream || '';
+    worker.screen.clock.bpm = (setup.clock || {}).bpm || 120;
 
     broadcastCommand('bootstrap', {layers: setup.layers});
     emitCommand('yamlLoad', {setup: setup});

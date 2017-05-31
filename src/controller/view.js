@@ -412,6 +412,12 @@ var ControllerView = View.extend({
 
   toJSON: function() {
     return {
+      clock: {
+        bpm: this.model.clock.bpm
+      },
+      audio: {
+        stream: this.audio.stream
+      },
       signals: this.signals.toJSON(),
       mappings: this.mappings.toJSON(),
       layers: this.model.layers.toJSON()
