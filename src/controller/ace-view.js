@@ -341,6 +341,23 @@ var AceEditor = View.extend({
 
     editor.setValue(view.script || view.original || '');
 
+    var customSC = localStorage.vfCustomSC ? JSON.parse(localStorage.vfCustomSC) : {
+      toggleBlockComment: {
+        mac: 'Command-Shift-7',
+        win: 'Ctrl-Shift-7'
+      },
+      togglecomment: {
+        mac: 'Command-7',
+        win: 'Ctrl-7'
+      }
+    };
+    Object.keys(customSC).forEach(function(commandName) {
+      var command = editor.commands.commands[commandName];
+      command.bindKey.mac = customSC[commandName].mac;
+      command.bindKey.win = customSC[commandName].win;
+      editor.commands.addCommand(command);
+    });
+
     var shortcuts = getEditorKeybordShortcuts(editor);
     view.shortcuts = '<ul>' + shortcuts.map(sc => `<li class="${ sc.command }">
       <label>${ sc.command }</label>
@@ -349,19 +366,6 @@ var AceEditor = View.extend({
       </div>
     </li>`).join('') + '</ul>';
 
-
-    var toggleBlockComment = editor.commands.commands.toggleBlockComment;
-    if (toggleBlockComment) {
-      toggleBlockComment.bindKey.mac = toggleBlockComment.bindKey.mac + '|Command-Alt-7';
-      toggleBlockComment.bindKey.win = toggleBlockComment.bindKey.win + '|Ctrl-Alt-7';
-      editor.commands.addCommand(toggleBlockComment);
-    }
-    var toggleComment = editor.commands.commands.togglecomment;
-    if (toggleComment) {
-      toggleComment.bindKey.mac = toggleComment.bindKey.mac + '|Command-Shift-7';
-      toggleComment.bindKey.win = toggleComment.bindKey.win + '|Ctrl-Shift-7';
-      editor.commands.addCommand(toggleComment);
-    }
 
     return view;
   },
