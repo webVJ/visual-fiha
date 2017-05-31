@@ -243,7 +243,7 @@ var AppRouter = require('ampersand-router').extend({
     });
 
     router.listenTo(midi, 'change:inputs', function() {
-      var _mappings = mappings.length ? mappings.export() : options.mappings || [];
+      var _mappings = mappings.length ? mappings.toJSON() : options.mappings || [];
       if (!_mappings.length) return;
       router.sendCommand('resetMappings', {
         mappings: _mappings

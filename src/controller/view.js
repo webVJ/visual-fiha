@@ -413,7 +413,7 @@ var ControllerView = View.extend({
   toJSON: function() {
     return {
       signals: this.signals.toJSON(),
-      mappings: this.mappings.export(),
+      mappings: this.mappings.toJSON(),
       layers: this.model.layers.toJSON()
     };
   },

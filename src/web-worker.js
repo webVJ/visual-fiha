@@ -232,7 +232,9 @@ var commands = {
     var setup = {
       layers: worker.layers.toJSON(),
       signals: worker.signals.toJSON(),
-      mappings: worker.mappings.export()
+      mappings: worker.mappings.toJSON(),
+      audio: {
+      }
     };
 
     localForage
@@ -312,7 +314,7 @@ var commands = {
     emitCommand('removeMapping', {name: name});
   },
   resetMappings: function(mappings) {
-    worker.mappings.import(mappings, true);
+    worker.mappings.reset(mappings);
   },
 
 
