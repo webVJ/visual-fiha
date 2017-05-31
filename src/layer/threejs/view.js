@@ -523,26 +523,8 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
   update: function() {
     if (!this.camera) return;
     var layer = this;
-    var clock = layer.model.screenState.clock;
-    var audio = layer.model.screenState.audio || {};
 
     layer.callUpdate({
-      frametime: clock.frametime,
-      bpm: clock.bpm,
-      beatnum: clock.beatnum,
-      beatprct: clock.beatprct,
-      beatlength: clock.beatlength,
-
-      bufferLength: function() { return audio.bufferLength || 128; },
-      vol: function(x) {
-        return (audio.timeDomain || [])[x] || 0;
-      },
-      frq: function(x) {
-        return (audio.frequency || [])[x] || 0;
-      },
-
-      param: function(...args) { return layer.model.parameters.getValue(...args); },
-
       scene: layer.scene,
 
       utils: utils,

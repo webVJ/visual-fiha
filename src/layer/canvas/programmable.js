@@ -1,24 +1,11 @@
 'use strict';
 var layerPrologue = require('./../function-prologue');
+
 module.exports = {
   setup: false,
   update: {
-    prologue: layerPrologue,// + canvasPrologue,
+    prologue: layerPrologue,
     argNames: [
-      'frametime',
-      'bpm',
-      'beatnum',
-      'beatprct',
-      'beatlength',
-      'latency',
-      'fps',
-
-      'bufferLength',
-      'vol',
-      'frq',
-
-      'param',
-
       'ctx',
 
       'utils',
@@ -35,7 +22,10 @@ module.exports = {
       'polygone',
       'line',
       'cacheContext',
-      'restoreContexts'
+      'restoreContexts',
+
+      'loadImage',
+      'loadVideo'
     ]
   }
 };

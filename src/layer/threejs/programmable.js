@@ -9,17 +9,6 @@ module.exports = {
   update: {
     prologue: layerPrologue,
     argNames: [
-      'frametime',
-      'bpm',
-      'beatnum',
-      'beatprct',
-      'beatlength',
-
-      'bufferLength',
-      'vol',
-      'frq',
-
-      'param',
       'scene',
       'getLoaderViewByName',
       'utils'
