@@ -5,14 +5,7 @@ require.ensure([
   'ampersand-collection'
 ], function() {
 require.ensure([
-  'ampersand-view',
-  'ampersand-view-switcher'
-], function() {
-require.ensure([
-  'p5',
-], function() {
-require.ensure([
-  'three',
+  'ampersand-view'
 ], function() {
 require.ensure([
   './screen/state',
@@ -43,7 +36,5 @@ setTimeout(resize, 1500);
 // ---------------------------------------------------------------
 }, 'screen-view');
 }, 'screen-state');
-}, 'threejs');
-}, 'p5');
 }, 'ampersand-view');
 }, 'ampersand-data');
