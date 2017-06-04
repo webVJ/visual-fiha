@@ -3,6 +3,7 @@ var Collection = require('ampersand-collection');
 var State = require('ampersand-state');
 var View = require('./../controller/control-view');
 var uniq = require('lodash.uniq');
+var fastValues = require('./../controller/fast-values');
 
 function filterEmpty(v) { return !!v; }
 
@@ -137,10 +138,11 @@ function targetSuggestions(origin) {
  *                                                                                *
 \**********************************************************************************/
 var EmitterTargetView = View.extend({
-  template: `<div class="mapping-emitter-target-view columns">
-  <div class="column gutter target-path"></div>
-  <div class="column no-grow"><button name="remove-target" class="vfi-trash-empty"></button></div>
-</div>`,
+  template: `
+  <div class="mapping-emitter-target-view columns">
+    <div class="column gutter target-path"></div>
+    <div class="column no-grow"><button name="remove-target" class="vfi-trash-empty"></button></div>
+  </div>`,
 
   bindings: {
     'model.path': {
@@ -184,6 +186,8 @@ var EmitterTargetView = View.extend({
  *                                                                                *
  *                                                                                *
 \**********************************************************************************/
+var fastLastValue = fastValues();
+
 var EmitterView = View.extend({
   initialize: function() {
     this.listenToAndRun(this.model, 'change:targets', function() {
@@ -203,21 +207,27 @@ var EmitterView = View.extend({
     })
   },
 
-  template: `<section class="mapping-emitter-view">
-  <header class="columns">
-    <div class="column gutter emitter-name"></div>
-    <div class="column no-grow"><button name="edit-transform-function" class="vfi-code"></button></div>
-    <div class="column gutter emitter-source"></div>
-    <div class="column no-grow"><button name="remove-emitter" class="vfi-trash-empty"></button></div>
-  </header>
-  <div class="columns">
-    <div class="column"><input type="text" name="new-emitter-target" placeholder="new target path" /></div>
-    <div class="column no-grow"><button name="add-emitter-target" class="vfi-plus"></button></div>
-  </div>
-  <div class="items"></div>
-</section>`,
+  template: `
+  <section class="mapping-emitter-view">
+    <header class="columns">
+      <div class="column gutter emitter-name"></div>
+      <canvas></canvas>
+      <div class="column no-grow"><button name="edit-transform-function" class="vfi-code"></button></div>
+      <div class="column gutter emitter-source"></div>
+      <div class="column no-grow"><button name="remove-emitter" class="vfi-trash-empty"></button></div>
+    </header>
+    <div class="columns">
+      <div class="column"><input type="text" name="new-emitter-target" placeholder="new target path" /></div>
+      <div class="column no-grow"><button name="add-emitter-target" class="vfi-plus"></button></div>
+    </div>
+    <div class="items"></div>
+  </section>`,
 
   bindings: {
+    'model.lastValue': {
+      selector: 'canvas',
+      type: fastLastValue.binding
+    },
     'model.name': '.emitter-name',
     'model.source': '.emitter-source'
   },
@@ -295,7 +305,9 @@ var EmitterView = View.extend({
       fn: function () {
         return this.rootView.codeEditor;
       }
-    }
+    },
+
+    ctx: fastLastValue.derived.ctx
   }
 });
 

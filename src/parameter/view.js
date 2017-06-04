@@ -1,6 +1,8 @@
 'use strict';
 var assign = require('lodash.assign');
 var View = require('./../controller/control-view');
+var fastValues = require('./../controller/fast-values');
+var fastLastValue = fastValues();
 
 var ParamView = View.extend({
   template: `
@@ -10,6 +12,7 @@ var ParamView = View.extend({
       <div class="column no-grow parameter-value-reset">
         <button title="Reset to default value" class="vfi-cancel"></button>
       </div>
+      <canvas class="column"></canvas>
       <div class="column parameter-value">
         <input name="value" type="text" />
       </div>
@@ -72,7 +75,9 @@ var ParamView = View.extend({
       fn: function() {
         return this.rootView.mappings.findMappingByTarget(this.parameterPath);
       }
-    }
+    },
+
+    ctx: fastLastValue.derived.ctx
   },
 
   bindings: {
@@ -100,13 +105,19 @@ var ParamView = View.extend({
       selector: '.parameter-type'
     },
 
-    value: {
-      type: function(el, val) {
-        if (el === document.activeElement) return;
-        el.value = val;
+    value: [
+      {
+        selector: 'canvas',
+        type: fastLastValue.binding
       },
-      selector: 'input[name=value]',
-    },
+      {
+        type: function(el, val) {
+          if (el === document.activeElement) return;
+          el.value = val;
+        },
+        selector: 'input[name=value]',
+      }
+    ],
 
     'mapping.name': [
       {
@@ -114,6 +125,15 @@ var ParamView = View.extend({
         selector: '.parameter-mapping-clear button',
         name: 'disabled',
         invert: true
+      },
+      {
+        type: 'toggle',
+        selector: '.parameter-value',
+        invert: true
+      },
+      {
+        type: 'toggle',
+        selector: 'canvas'
       },
       {
         type: 'value',
@@ -260,6 +280,7 @@ ParamView.types.boolean = ParamView.extend({
       <div class="column no-grow parameter-value-reset">
         <button title="Reset to default value" class="vfi-cancel"></button>
       </div>
+      <canvas class="column"></canvas>
       <div class="column parameter-value">
         <button class="parameter-toggle-btn"></button>
       </div>
@@ -321,6 +342,7 @@ ParamView.types.number = ParamView.extend({
       <div class="column no-grow parameter-value-reset">
         <button title="Reset to default value" class="vfi-cancel"></button>
       </div>
+      <canvas class="column"></canvas>
       <div class="column parameter-value">
         <input name="value" type="number" />
       </div>

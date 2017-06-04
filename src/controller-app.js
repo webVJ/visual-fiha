@@ -157,6 +157,9 @@ var AppRouter = require('ampersand-router').extend({
           mappingState.trigger('change:targets');
         }
         break;
+      case 'updateMappingValues':
+        mappings.set(payload.values);
+        break;
       case 'removeMapping':
         mappings.remove(payload.name);
         break;

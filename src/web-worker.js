@@ -132,6 +132,9 @@ function _animate() {
   emitCommand('updateSignals', {
     signals: worker.signals.serialize().filter(o => o.name)
   });
+  emitCommand('updateMappingValues', {
+    values: worker.mappings.lastValues()
+  });
 
   broadcastCommand('updateLayers', {
     layers: worker.layers.serialize()
