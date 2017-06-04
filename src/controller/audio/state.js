@@ -1,6 +1,9 @@
 'use strict';
 var State = require('ampersand-state');
 
+var el = new Audio(); // singelton audio element interface
+el.crossOrigin = 'anonymous';
+
 var AudioState = State.extend({
   props: {
     // stream: ['string', false, 'http://46.163.116.101:9000/stream-low'],
@@ -30,10 +33,10 @@ var AudioState = State.extend({
 
     this._bindAudioEvents();
     this.on('change:stream', function() {
-      this.audioElement.src = this.stream || '';
+      el.src = this.stream || '';
     });
 
-    if (this.stream) this.audioElement.src = this.stream;
+    if (this.stream) el.src = this.stream;
   },
 
   _bindAudioEvents: function() {
@@ -43,14 +46,14 @@ var AudioState = State.extend({
 
     Object.keys(state.audioEvents).forEach(function(name) {
       fns[name] = function(evt) {
-        console.info('event', name, evt.type);
+        // console.info('event', name, evt.type);
         state.trigger('audio:' + name, evt);
         state.audioEvents[name].call(state, evt);
       };
     });
 
     Object.keys(fns).forEach(function(name) {
-      state.audioElement.addEventListener(name, fns[name], false);
+      el.addEventListener(name, fns[name], false);
     });
     return state;
   },
@@ -58,7 +61,7 @@ var AudioState = State.extend({
   _unbindAudioEvents: function() {
     var fns = this._audioEvents || {};
     Object.keys(fns).forEach(function(name) {
-      this.audioElement.removeEventListener(name, fns[name], false);
+      el.removeEventListener(name, fns[name], false);
     }, this);
     this._audioEvents = {};
     return this;
@@ -66,35 +69,20 @@ var AudioState = State.extend({
 
   audioEvents: {
     error: function() {
-      var error = this.audioElement.error;
-      console.error('audio error (%s):', [
+      var error = el.error;
+      console.error('audio error "%s" (%s)', [
         'aborted',
         'network',
         'decode',
         'not supported'
-      ][error.code - 1]);
+      ][error.code - 1], error.code);
     },
     canplay: function() {
-      this.audioElement.play();
+      el.play();
     }
   },
 
   derived: {
-    audioElement: {
-      deps: [],
-      fn: function() {
-        var id = 'vf-audio-stream';
-        var el = document.getElementById(id);
-        if (!el) {
-          el = document.createElement('audio');
-          el.id = id;
-          el.style.display = 'none';
-          el.crossOrigin = 'anonymous';
-          document.body.appendChild(el);
-        }
-        return el;
-      }
-    },
     context: {
       deps: [],
       fn: function() {
@@ -102,9 +90,9 @@ var AudioState = State.extend({
       }
     },
     audioSource: {
-      deps: ['audioElement', 'context'],
+      deps: ['context'],
       fn: function() {
-        return this.context.createMediaElementSource(this.audioElement);
+        return this.context.createMediaElementSource(el);
       }
     },
     analyser: {
