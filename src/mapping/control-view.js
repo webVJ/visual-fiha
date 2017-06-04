@@ -289,14 +289,10 @@ var EmitterView = View.extend({
     });
   },
 
-  subviews: {
-    mappingsList: {
-      waitFor: 'targets',
-      selector: '.items',
-      prepareView: function(el) {
-        return this.renderCollection(this.targets, EmitterTargetView, el);
-      }
-    }
+  render: function() {
+    View.prototype.render.apply(this, arguments);
+    this.mappingsList = this.mappingsList || this.renderCollection(this.targets, EmitterTargetView, this.query('.items'));
+    return this;
   },
 
   derived: {
