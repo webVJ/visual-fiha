@@ -90,8 +90,8 @@ var DetailsView = View.extend({
     'model.type': [
       {
         selector: '[name=parameter-type]',
-        type: function(el, val) {
-          if (document.activeElement === el) return;
+        type: function(el, val, prev) {
+          if (document.activeElement === el || prev === val) return;
           el.querySelectorAll('option').forEach(o => { o.selected = false; });
           var selectedOption = el.querySelector('option[value="' + val + '"]');
           if (selectedOption) selectedOption.selected = true;
@@ -103,6 +103,7 @@ var DetailsView = View.extend({
       },
       {
         type: function(el, val, prev) {
+          if (prev === val) return;
           if (prev) el.classList.remove('details-' + prev);
           el.classList.add('details');
           el.classList.add('details-' + val);
