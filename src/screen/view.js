@@ -266,15 +266,17 @@ var ScreenView = View.extend(clientMixin, {
   _ar: null,
   _animate: function() {
     var view = this;
-    view._ar = window.requestAnimationFrame(function() {
-      view
-        ._updateAudio()
-        ._updateClock()
-        ._updateLayers();
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        view
+          ._updateAudio()
+          ._updateClock()
+          ._updateLayers();
 
-      view.frames++;
-      // view._ar = null;
-      view._animate();
+        view.frames++;
+        // view._ar = null;
+        view._animate();
+      });
     });
   },
 

@@ -92,8 +92,10 @@ var ControllerView = View.extend({
 
     controllerView.update();
 
-    controllerView._arId = window.requestAnimationFrame(function() {
-      controllerView._animate();
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        controllerView._animate();
+      });
     });
   },
 
