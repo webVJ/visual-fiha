@@ -197,10 +197,45 @@ var AppRouter = require('ampersand-router').extend({
     router.trigger('app:worker:' + command, payload);
   },
 
-  initialize: function(options) {
-    var router = this;
+  initializeBroadcastChannel: function() {
+    this.broadcastChannel = new BroadcastChannel(this.broadcastId || 'vfBus');
 
-    router.worker = new LoadedWorker();
+    this.broadcastChannel.addEventListener('message', this._handleBroadcastMessages.bind(this), {
+      capture: false,
+      passive: true
+    });
+
+    return this;
+  },
+
+  leaveBroadcastChannel: function() {
+    if (this.broadcastChannel) this.broadcastChannel.close();
+    return this;
+  },
+
+  initializeWorker: function() {
+    this.worker = new LoadedWorker();
+
+    this.worker.addEventListener('message', this._handleWorkerMessages.bind(this), {
+      capture: false,
+      passive: true
+    });
+
+    return this;
+  },
+
+  killWorker: function() {
+    var router = this;
+    if (router.worker) router.worker.terminate();
+    return router;
+  },
+
+  initialize: function(options) {
+    var router = this
+      .initializeWorker()
+      .initializeBroadcastChannel();
+
+
     router.settings = new Settings('vf');
 
     var screen = router.model = new ScreenState({}, {
@@ -222,18 +257,6 @@ var AppRouter = require('ampersand-router').extend({
       }
     };
     var mappings = router.mappings = new Mappings([], mappingContext);
-
-    router.broadcastChannel = new BroadcastChannel('spike');
-
-    router.broadcastChannel.addEventListener('message', this._handleBroadcastMessages.bind(this), {
-      capture: false,
-      passive: true
-    });
-
-    router.worker.addEventListener('message', this._handleWorkerMessages.bind(this), {
-      capture: false,
-      passive: true
-    });
 
     var midi = router.midi = (router.midi || new MIDIAccessState({}));
 

@@ -105,9 +105,12 @@ function registerCommand(commandName, command) {
 }
 
 var screens = {};
-var channel = new BroadcastChannel('spike');
+var broadcastId = 'vfBus';
+var channel = new BroadcastChannel(broadcastId);
+
 function broadcastCommand(name, payload) {
-  channel.postMessage({
+  var emitter = worker.mode === 'embedded' ? worker : channel;
+  emitter.postMessage({
     command: name,
     payload: payload
   });
@@ -183,7 +186,7 @@ _internalTimeout = setTimeout(_animate, _frameMillis);
 /******************************************************\
  * Screen registration                                *
 \******************************************************/
-channel.addEventListener('message', function(evt) {
+function handleChannelCommands(evt) {
   var command = evt.data.command;
   if (command !== 'register') return;
 
@@ -193,7 +196,9 @@ channel.addEventListener('message', function(evt) {
   }
 
   screens[payload.id] = payload.id;
-}, {
+}
+
+channel.addEventListener('message', handleChannelCommands, {
   capture: false,
   passive: true
 });
@@ -204,6 +209,30 @@ channel.addEventListener('message', function(evt) {
  * Worker commands                                    *
 \******************************************************/
 var commands = {
+  setMode: function(mode) {
+    worker.mode = mode;
+    if (channel && typeof channel.close === 'function') channel.close();
+
+    if (mode !== 'embedded') {
+      channel = new BroadcastChannel(broadcastId);
+      channel.addEventListener('message', handleChannelCommands, {
+        capture: false,
+        passive: true
+      });
+    }
+  },
+
+  setBroadcastId: function(newBroadcastId) {
+    broadcastId = newBroadcastId;
+    if (channel && typeof channel.close === 'function') channel.close();
+
+    channel = new BroadcastChannel(broadcastId);
+    channel.addEventListener('message', handleChannelCommands, {
+      capture: false,
+      passive: true
+    });
+  },
+
   latencyCheck: function(origin) {
     broadcastCommand('latencyCheck', {origin: origin});
   },

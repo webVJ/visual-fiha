@@ -69,13 +69,14 @@ Object.keys(commands).forEach(registerCommand);
 
 var clientMixin = {};
 clientMixin.initializeClient = function initializeClient() {
-  var channel = new window.BroadcastChannel('spike');
-  var follower = this;
+  var channel = this.channel || new window.BroadcastChannel(this.broadcastId);
+  var view = this;
   var commandArgs;
 
   channel.addEventListener('message', function(evt) {
     var commandName = evt.data.command;
     var command = commands[commandName];
+    view.model.trigger('app:broadcast:' + commandName, evt.data.payload);
 
     if (typeof command !== 'function') {
       return;
@@ -90,8 +91,7 @@ clientMixin.initializeClient = function initializeClient() {
       return evt.data.payload[argName];
     });
 
-    command.apply(follower, commandArgs);
-    follower.model.trigger('app:broadcast:' + commandName, evt.data.payload);
+    command.apply(view, commandArgs);
   }, {
     capture: false,
     passive: true
@@ -128,11 +128,14 @@ var ScreenView = View.extend(clientMixin, {
   fps: 0,
   usedHeap: performance.memory.usedJSHeapSize,
 
-  initialize: function () {
+  initialize: function (options) {
     var view = this;
     if (!view.model) {
       throw new Error('Missing model option for ScreenView');
     }
+    view.broadcastId = options.broadcastId;
+    view.channel = options.channel;
+
     view.initializeClient();
 
     view._fpsInterval = setInterval(function() {
@@ -199,7 +202,12 @@ var ScreenView = View.extend(clientMixin, {
 
   remove: function() {
     if (this.channel) {
-      this.channel.close();
+      if (typeof this.channel.terminate === 'function') {
+        this.channel.terminate();
+      }
+      else {
+        this.channel.close();
+      }
     }
     clearInterval(this._fpsInterval);
     return View.prototype.remove.apply(this, arguments);
