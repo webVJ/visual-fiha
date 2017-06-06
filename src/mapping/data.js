@@ -3,51 +3,25 @@
 var resolve = require('./../utils/resolve');
 var State = require('ampersand-state');
 var Collection = require('ampersand-collection');
-
-
-function compileTransformFunction(fn) {
-  fn = fn || function(val) { return val; };
-  var compiled;
-
-  var str = `compiled = (function() {
-  // override some stuff that should not be used
-  var navigator, window, global, document, module, exports;
-
-  return function(val, oldVal) {
-    var result;
-    try {
-      result = (${ fn.toString() })(val, oldVal);
-    }
-    catch(e) {
-      result = e;
-    }
-    return result;
-  };
-})();`;
-  try {
-    eval(str);// jshint ignore:line
-  }
-  catch (e) {
-    compiled = function(val) { return val; };
-  }
-  return compiled;
-}
+var compileFunction = require('./../utils/compile-function');
 
 var MappingEmitter = State.extend({
   idAttribute: 'name',
 
   props: {
     targets: ['array', true, function() { return []; }],
-    transformFunction: ['string', true, 'function(val){return val;}'],
+    transformFunction: ['string', true, 'return val;'],
     source: ['string', false, ''],
     name: ['string', true, null]
   },
+
+  lastValue: null,
 
   derived: {
     fn: {
       deps: ['transformFunction'],
       fn: function() {
-        return compileTransformFunction(this.transformFunction);
+        return compileFunction(this.name, '', 'val', 'prev', this.transformFunction);
       }
     },
     sourceState: {
@@ -140,7 +114,14 @@ var Mappings = Collection.extend({
   },
 
 
-
+  lastValues: function() {
+    return this.map(function(model) {
+      return {
+        lastValue: model.lastValue,
+        name: model.name
+      };
+    });
+  },
 
 
   resolve: function(path) {
@@ -149,6 +130,8 @@ var Mappings = Collection.extend({
 
   process: function(mappings, value) {
     mappings.forEach(function(mapping) {
+      mapping.lastValue = value;
+
       mapping.targets.forEach(function(target) {
         var parts = target.split('.');
         var targetParameter = parts.pop();
@@ -158,24 +141,25 @@ var Mappings = Collection.extend({
           state = this.resolve(targetStatePath);
         }
         catch(e) {
-          console.info('mapping process error: %s', e.message);
+          console.info('%cmapping process error: %s', 'color:red', e.message);
         }
         if (!state) return;
 
-        var finalValue = mapping.fn(value, state.get(targetParameter));
-        if (finalValue instanceof Error) {
-          console.info('mapping process error: %s', finalValue.message);
+        var mappedValue = mapping.fn(value, state.get(targetParameter));
+
+        if (mappedValue instanceof Error) {
+          console.info('%cmapping process error: %s', 'color:red', mappedValue.message);
           return;
         }
+        if (state.type === 'boolean') mappedValue = mappedValue === 'false' || mappedValue === '0' ? false : !!mappedValue;
+        if (state.type === 'string') mappedValue = (mappedValue || '').toString();
+        if (state.type === 'number') mappedValue = Number(mappedValue || 0);
 
-        if (state.type === 'boolean') finalValue = finalValue === 'false' ? false : !!finalValue;
-        if (state.type === 'string') finalValue = (finalValue || '').toString();
-        if (state.type === 'number') finalValue = Number(finalValue || 0);
         try {
-          state.set(targetParameter, finalValue);
+          state.set(targetParameter, mappedValue);
         }
         catch (e) {
-          console.info('mapping process error: %s', e.message);
+          console.info('%cmapping process error: %s', 'color:red', e.message);
         }
       }, this);
     }, this);
