@@ -501,12 +501,8 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
     });
 
     layer.callSetup(function() {
-      console.info(layer.model.name +' all done!');
-    }, {
-      getLoaderViewByName: function(name) {
-        return layer.loaders.views.find(v => v.model.name === name);
-      }
-    });
+      console.info('%c%s ready!', 'color: lightblue', layer.model.name);
+    }, {});
 
     return layer;
   },
@@ -525,13 +521,7 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
     var layer = this;
 
     layer.callUpdate({
-      scene: layer.scene,
-
-      utils: utils,
-
-      getLoaderViewByName: function(name) {
-        return layer.loaders.views.find(v => v.model.name === name);
-      }
+      utils: utils
     });
 
     this.renderer.render(this.scene, this.camera);
