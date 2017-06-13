@@ -95,11 +95,8 @@ var AppRouter = require('ampersand-router').extend({
         }));
         break;
 
-      case 'updateLayers':
-        layers.set(payload.layers);
-        break;
-
       case 'heartbeat':
+        layers.set(payload.layers);
         screen.clock.set(payload.clock);
         break;
 

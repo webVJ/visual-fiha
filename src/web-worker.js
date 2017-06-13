@@ -139,9 +139,6 @@ function _animate() {
     values: worker.mappings.lastValues()
   });
 
-  broadcastCommand('updateLayers', {
-    layers: worker.layers.serialize()
-  });
 
 
   var _now = performance.now();
@@ -322,6 +319,7 @@ var commands = {
   heartbeat: function(audio) {
     worker.audio = audio;
     broadcastCommand('heartbeat', {
+      layers: worker.screen.layers.toJSON(),
       clock: worker.screen.clock.serialize(),
       audio: audio
     });

@@ -54,13 +54,14 @@ var commands = {
       state = this.model.layers.add(layer);
     }
   },
-  heartbeat: function(clock, audio) {
+  heartbeat: function(clock, audio, layers) {
     this.model.clock.set(clock);
     this.model.trigger('change:clock.frametime', clock.frametime);
     this.model.audio = audio;
+    this.model.layers.set(layers);
   },
   updateLayers: function(layers) {
-    this.model.layers.set(layers);
+    console.info('deprecate updateLayers command');
   }
 };
 
