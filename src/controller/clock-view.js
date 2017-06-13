@@ -69,10 +69,9 @@ var ClockView = ControlView.extend({
     });
   },
 
-  _setBPM: function(msecs) {
-    msecs = msecs && !msecs.target ? msecs : Date.now();
+  _setBPM: function() {
     return {
-      bpm: Math.round((60000 * this.count / (msecs - this.first)) * 100) / 100
+      bpm: Number(this.query('[name="bpm"]').value)
     };
   },
 
@@ -90,8 +89,9 @@ var ClockView = ControlView.extend({
     }
     else {
       this.count++;
-
-      this.sendCommand('setBPM', this._setBPM(msecs));
+      this.sendCommand('setBPM', {
+        bpm: Math.round((60000 * this.count / (msecs - this.first)) * 100) / 100
+      });
     }
 
 
