@@ -141,14 +141,20 @@ var Mappings = Collection.extend({
           state = this.resolve(targetStatePath);
         }
         catch(e) {
-          console.info('%cmapping process error: %s', 'color:red', e.message);
+          console.info('%cmapping process resolve error: %s', 'color:red', e.message);
         }
         if (!state) return;
 
-        var mappedValue = mapping.fn(value, state.get(targetParameter));
+        var mappedValue;
+        try {
+          mappedValue = mapping.fn.call(this.context, value, state.get(targetParameter));
+        }
+        catch (e) {
+          mappedValue = e;
+        }
 
         if (mappedValue instanceof Error) {
-          console.info('%cmapping process error: %s', 'color:red', mappedValue.message);
+          console.info('%cmapping process computation error: %s', 'color:red', mappedValue.message);
           return;
         }
         if (state.type === 'boolean') mappedValue = mappedValue === 'false' || mappedValue === '0' ? false : !!mappedValue;
@@ -159,7 +165,7 @@ var Mappings = Collection.extend({
           state.set(targetParameter, mappedValue);
         }
         catch (e) {
-          console.info('%cmapping process error: %s', 'color:red', e.message);
+          console.info('%cmapping process assignement error: %s', 'color:red', e.message);
         }
       }, this);
     }, this);
