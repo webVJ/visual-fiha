@@ -5,6 +5,34 @@ var State = require('ampersand-state');
 var Collection = require('ampersand-collection');
 var compileFunction = require('./../utils/compile-function');
 
+var prologue = `
+const frametime = this.clock.frametime;
+const bpm = this.clock.bpm;
+const beatnum = this.clock.beatnum;
+const beatprct = this.clock.beatprct;
+const beatlength = this.clock.beatlength;
+
+const audioRange = this.audio.bufferLength || 128;
+
+const bufferLength = function() { return audioRange; };
+
+const vol = function vol(x) {
+  var arr = (this.audio.timeDomain || []);
+  if (x === 'min') return arr.reduce((a, b) => Math.min(a, b), 1000);
+  if (x === 'max') return arr.reduce((a, b) => Math.max(a, b), 0);
+  if (typeof x === 'undefined') return arr.reduce((a, b) => a + b, 0) / arr.length;
+  return arr[x] || 0;
+};
+const frq = function frq(x) {
+  var arr = (this.audio.frequency || []);
+  if (x === 'min') return arr.reduce((a, b) => Math.min(a, b), 1000);
+  if (x === 'max') return arr.reduce((a, b) => Math.max(a, b), 0);
+  if (typeof x === 'undefined') return arr.reduce((a, b) => a + b, 0) / arr.length;
+  return arr[x] || 0;
+};
+`;
+
+
 var MappingEmitter = State.extend({
   idAttribute: 'name',
 
@@ -21,7 +49,7 @@ var MappingEmitter = State.extend({
     fn: {
       deps: ['transformFunction'],
       fn: function() {
-        return compileFunction(this.name, '', 'val', 'prev', this.transformFunction);
+        return compileFunction(this.name, prologue, 'val', 'prev', 'store', this.transformFunction);
       }
     },
     sourceState: {
@@ -131,8 +159,9 @@ var Mappings = Collection.extend({
   process: function(mappings, value) {
     mappings.forEach(function(mapping) {
       mapping.lastValue = value;
-
+      mapping.store = mapping.store || {};
       mapping.targets.forEach(function(target) {
+        var store = mapping.store[target] = mapping.store[target] || {};
         var parts = target.split('.');
         var targetParameter = parts.pop();
         var targetStatePath = parts.join('.');
@@ -147,7 +176,7 @@ var Mappings = Collection.extend({
 
         var mappedValue;
         try {
-          mappedValue = mapping.fn.call(this.context, value, state.get(targetParameter));
+          mappedValue = mapping.fn.call(this.context, value, state.get(targetParameter), store);
         }
         catch (e) {
           mappedValue = e;
@@ -157,6 +186,7 @@ var Mappings = Collection.extend({
           console.info('%cmapping process computation error: %s', 'color:red', mappedValue.message);
           return;
         }
+
         if (state.type === 'boolean') mappedValue = mappedValue === 'false' || mappedValue === '0' ? false : !!mappedValue;
         if (state.type === 'string') mappedValue = (mappedValue || '').toString();
         if (state.type === 'number') mappedValue = Number(mappedValue || 0);
