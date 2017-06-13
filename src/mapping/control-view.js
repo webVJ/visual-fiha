@@ -276,9 +276,11 @@ var EmitterView = View.extend({
     var mappingView = this;
     var rootView = this.rootView;
     var model = this.model;
+    var name = model.getId();
     rootView.getEditor({
-      tabName: this.model.getId() + ' transformation',
-      script: (model.transformFunction || function(val) { return val; }).toString(),
+      title: name + ' mapping',
+      tabName: name,
+      script: (model.transformFunction || 'return val;').toString(),
       autoApply: true,
       language: 'javascript',
       onvalidchange: function doneEditingTransformFunction(str) {
