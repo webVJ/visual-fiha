@@ -494,7 +494,7 @@ var ControllerView = View.extend({
     <div class="controller rows">
       <div class="vf-app-menu"></div>
       <div class="row columns header no-grow">
-        <a href class="column gutter no-grow vf-app-name">Visual Fiha <span class="hamburger-menu"><span></span></span></a>
+        <a href class="column gutter no-grow vf-app-name"><span class="hamburger-menu"><span></span></span> Visual Fiha</a>
 
         <div class="column columns">
           <div class="column gutter vf-worker-performance"></div>

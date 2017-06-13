@@ -7,6 +7,34 @@
   <style type="text/css">
 html { font-size: 11px; }
 
+.hamburger-menu {
+  display: inline-block;
+  margin-left: 0 var(--spacing);
+}
+
+.hamburger-menu span,
+.hamburger-menu:before,
+.hamburger-menu:after {
+  display:  block;
+  width: 1em;
+  height: calc(1em / 5);
+  background-color: var(--yes-color);
+}
+
+.hamburger-menu:before,
+.hamburger-menu:after {
+  content: '';
+}
+
+.hamburger-menu:before {
+  margin-bottom: calc(1em / 5);
+}
+
+.hamburger-menu:after {
+  margin-top: calc(1em / 5);
+}
+
+
 .controller-app:after {
   display: block;
   position: fixed;
@@ -39,6 +67,7 @@ html { font-size: 11px; }
 .controller a:link,
 .controller a:visited {
   color: var(--yes-color);
+  text-decoration: none;
 }
 
 .region-right {}
