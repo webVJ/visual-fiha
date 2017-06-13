@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Embedded | Visual Fiha</title>
+  <link rel="shortcut icon" href="assets/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="assets/styles.css">
+  <style type="text/css">
+.vf-embedded-controls {
+  position: fixed;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-30px);
+  whill-change: transform;
+  transition: transform 218ms ease;
+}
+
+.vf-embedded-controls.info {
+  transform: translateY(-100%);
+}
+.vf-embedded-controls.info [name=mode-info] {
+
+}
+
+.vf-embedded-controls.minimized {
+
+}
+.vf-embedded-controls.minimized [name=mode-minimized] {
+
+}
+
+.vf-embedded-controls .content {
+  background-color: var(--bg-color);
+}
+
+.vf-embedded-controls a {
+  color: var(--info-color);
+}
+</style>
+</head>
+<body class="embedded-app">
+  <div class="screen"></div>
+
+  <div class="vf-embedded-controls rows">
+    <div class="buttons">
+      <button title="Close" class="close vfi-down-open"></button>
+      <button title="Open" class="open vfi-up-open"></button>
+    </div>
+
+    <div class="content gutter">
+      <header class="row columns">
+        <h1 class="column title"></h1>
+        <h2 class="column author"></h2>
+      </header>
+
+      <div class="row columns">
+        <div class="column columns no-grow sound-controls">
+          <div class="column no-grow">
+            <button title="play" class="vfi-play"></button>
+          </div>
+          <div class="column no-grow position"></div>
+          <div class="column no-grow duration"></div>
+        </div>
+
+        <div class="column sound-provider"></div>
+      </div>
+
+      <footer class="row text-right">
+        Made with <a title="Site of Visual Fiha" href="https://zeropaper.github.io/visual-fiha">Visual Fiha</a>, an open-source, no-install, MIDI VJing tool.
+      </footer>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="vendor-build.js"></script>
+  <script type="text/javascript" src="embedded-build.js"></script>
+</body>
+</html>

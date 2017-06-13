@@ -103,8 +103,9 @@ module.exports = function(env) {
   return {
     context: srcPath,
     entry: {
-      'controller':'./controller-app.js',
-      'screen':'./screen-app.js',
+      controller:'./controller-app.js',
+      screen:'./screen-app.js',
+      embedded:'./embedded-app.js',
       vendor: [
         'ampersand-collection',
         'ampersand-events',
@@ -148,6 +149,7 @@ module.exports = function(env) {
         {from: resolve(__dirname, 'assets/styles.css'), to: 'assets/styles.css'},
         {from: resolve(__dirname, 'assets/font/vf-embedded.css'), to: 'assets/font/vf-embedded.css'},
         {from: 'controller.html'},
+        {from: 'embedded.html'},
         {from: 'screen.html'},
         {from: resolve(acePath, 'worker-javascript.js')},
         {from: resolve(acePath, 'worker-css.js')}
