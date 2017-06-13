@@ -38,11 +38,7 @@ require.ensure([
 // ---------------------------------------------------------------
 
 
-
-// almost unique id
-function auid() {
-  return parseInt((Math.random() + '.' + performance.now()).replace(/\./g, ''), 10);
-}
+var auid = require('./utils/auid');
 var LoadedWorker = require('worker-loader?name=worker-build.js!./web-worker.js');
 var ControllerView = require('./controller/view');
 var ScreenState = require('./screen/state');
