@@ -262,6 +262,9 @@ var commands = {
       layers: worker.layers.toJSON(),
       signals: worker.signals.toJSON(),
       mappings: worker.mappings.toJSON(),
+
+      title: worker.setupTitle || '',
+      author: worker.setupAuthor || '',
       audio: {
         stream: worker.stream || ''
       },
@@ -286,6 +289,9 @@ var commands = {
           worker.layers.reset(setup.layers);
           worker.signals.reset(setup.signals);
           worker.mappings.reset(setup.mappings);
+
+          worker.setupTitle = setup.title || '';
+          worker.setupAuthor = setup.author || '';
           worker.stream = (setup.audio || {}).stream || '';
           worker.screen.clock.bpm = (setup.clock || {}).bpm || 120;
 
@@ -302,6 +308,9 @@ var commands = {
     worker.layers.reset(setup.layers);
     worker.signals.reset(setup.signals);
     worker.mappings.reset(setup.mappings);
+
+    worker.setupTitle = setup.title || '';
+    worker.setupAuthor = setup.author || '';
     worker.stream = (setup.audio || {}).stream || '';
     worker.screen.clock.bpm = (setup.clock || {}).bpm || 120;
 

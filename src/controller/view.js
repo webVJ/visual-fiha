@@ -412,6 +412,8 @@ var ControllerView = View.extend({
 
   toJSON: function() {
     return {
+      author: this.setupAuthor || '',
+      title: this.setupTitle || '',
       clock: {
         bpm: this.model.clock.bpm
       },
@@ -425,6 +427,8 @@ var ControllerView = View.extend({
   },
 
   fromJSON: function(json) {
+    this.setupAuthor = json.author || '';
+    this.setupTitle = json.title || '';
     this.model.layers.reset(json.layers);
     this.signals.reset(json.signals);
     this.mappings.reset(json.mappings);
