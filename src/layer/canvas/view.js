@@ -43,6 +43,7 @@ module.exports = ScreenLayerView.types.canvas = ScreenLayerView.extend(programma
   update: function() {
     var layer = this;
     if (!layer.parent || !layer.parent.el) return;
+    layer.model.parameters.forEach(layer.updateParameter, layer);
 
     // this ensures the screen has the right size for disblay and computation
     var cw = layer.width = layer.parent.el.clientWidth;

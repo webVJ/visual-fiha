@@ -251,7 +251,6 @@ var ScreenView = View.extend(clientMixin, {
         var ScreenLayerConstructor = LayerView.types[type] || LayerView;
         return new ScreenLayerConstructor(opts);
       }, this.el, {parent: this});
-      this._updateLayers();
     }
 
     if (!this._ar) {

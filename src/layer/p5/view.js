@@ -107,6 +107,7 @@ var P5LayerView = LayerView.types.p5 = LayerView.extend({
   },
 
   update: function() {
+    this.model.parameters.forEach(this.updateParameter, this);
     this.p5.redraw();
   },
 

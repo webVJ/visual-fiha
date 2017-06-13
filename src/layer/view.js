@@ -127,7 +127,9 @@ var LayerView = View.extend({
     return View.prototype.remove.apply(this, arguments);
   },
 
-  update: function() {}
+  update: function() {
+    this.model.parameters.forEach(this.updateParameter, this);
+  }
 });
 LayerView.types = {};
 module.exports = LayerView;

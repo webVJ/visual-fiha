@@ -525,6 +525,8 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
     });
 
     this.renderer.render(this.scene, this.camera);
+
+    this.model.parameters.forEach(this.updateParameter, this);
   },
 
   remove: function() {
