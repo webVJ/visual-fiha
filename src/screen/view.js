@@ -254,9 +254,7 @@ var ScreenView = View.extend(clientMixin, {
       }, this.el, {parent: this});
     }
 
-    if (!this._ar) {
-      this._animate();
-    }
+    this._animate();
 
     return this.resize();
   },
@@ -271,18 +269,19 @@ var ScreenView = View.extend(clientMixin, {
     return this;
   },
 
-  _ar: null,
+  _lastFrametime: null,
   _animate: function() {
     var view = this;
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
+        if (view._lastFrametime === view.model.clock.frametime) return view._animate();
         view
           ._updateAudio()
           ._updateClock()
           ._updateLayers();
+        view._lastFrametime = view.model.clock.frametime;
 
         view.frames++;
-        // view._ar = null;
         view._animate();
       });
     });
