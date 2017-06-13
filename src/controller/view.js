@@ -17,6 +17,7 @@ var ControlScreenControls = require('./control-screen-controls-view');
 // var Timeline = require('./timeline-view');
 var AudioState = require('./audio/state');
 
+var auid = require('./../utils/auid');
 var ControllerView = View.extend({
   children: {
     audio: AudioState
@@ -396,7 +397,8 @@ var ControllerView = View.extend({
   },
 
   _openScreen: function() {
-    window.open('./screen.html#' + this.broadcastId, 'screen', 'width=800,height=600,location=no');
+    var id = auid();
+    var screenWin = window.open('./screen.html#' + this.broadcastId, id, 'width=800,height=600,location=no');
   },
 
   _startTour: function() {
