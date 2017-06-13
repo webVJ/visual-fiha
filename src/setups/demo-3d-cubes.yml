@@ -11,11 +11,11 @@ layers:
     setupFunction: |
       var helper = new THREE.AxisHelper(20);
       helper.name = 'axisHelper';
-      layer.scene.add(helper);
+      scene.add(helper);
 
       helper = new THREE.GridHelper(200);
       helper.name = 'gridHelper';
-      layer.scene.add(helper);
+      scene.add(helper);
       ready();
     updateFunction: |
       var tilt = vol(4) - 127;
@@ -24,8 +24,8 @@ layers:
       var dist = 80 + scale;
       var deg = (frametime % (speed * 360)) / speed;
 
-      layer.camera.position.set(Math.cos(deg) * dist, tilt, Math.sin(deg) * dist);
-      layer.camera.lookAt(layer.scene.position);
+      camera.position.set(Math.cos(deg) * dist, tilt, Math.sin(deg) * dist);
+      camera.lookAt(scene.position);
     parameters: []
     geometries:
       - visible: true

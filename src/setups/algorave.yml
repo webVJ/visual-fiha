@@ -5,27 +5,21 @@ mappings:
       - layers.canvas.knobA
       - layers.canvas.parameters.knobA.value
     transformFunction: |-
-      function (value) {
-        return value;
-      }
+      return value;
     source: 'midi:nk2.knob1'
   nk2.knob2:
     targets:
       - layers.canvas.knobB
       - layers.canvas.parameters.knobB.value
     transformFunction: |-
-      function (value) {
-        return value;
-      }
+      return value;
     source: 'midi:nk2.knob2'
   nk2.knob3:
     targets:
       - layers.canvas.knobC
       - layers.canvas.parameters.knobC.value
     transformFunction: |-
-      function (value) {
-        return value;
-      }
+      return value;
     source: 'midi:nk2.knob3'
   beatnum100Str:
     targets:

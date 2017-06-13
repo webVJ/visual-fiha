@@ -2,7 +2,6 @@ signals:
   func:
     type: programmable
     updateFunction: |
-      // console.info('beatnum', beatnum);
       return beatnum;
   hsla:
     type: hsla
@@ -22,28 +21,19 @@ mappings:
     targets:
       - layers.txt.parameters.text.value
     transformFunction: |
-      function(val){
-        // console.info('txtText', val);
-        return val;
-      }
+      return val;
     source: signals.func.result
   knob1:
     targets:
       - layers.txt.parameters.zIndex.value
     transformFunction: |
-      function(val){
-        // console.info('knob1', val);
-        return val;
-      }
+      return val;
     source: 'midi:nk2.knob1'
   color1:
     targets:
       - layers.txt.parameters.color1.value
     transformFunction: |
-      function(val){
-        // console.info('color1', val);
-        return val;
-      }
+      return val;
     source: signals.hsla.result
 layers:
   txt:

@@ -1,290 +1,388 @@
-signals:
-  beat:
-    type: beat
-    defaultValue: 1
-    input: 114.26
+author: ''
+title: ''
+clock:
+  bpm: 120
+audio:
+  stream: ''
+signals: {}
 mappings:
   knob1:
     targets:
-      - layers.canvas.knobA
-    transformFunction: 'function(val) { return val; }'
+      - layers.canvas.parameters.knobA.value
+    transformFunction: return val;
     source: 'midi:nk2.knob1'
   knob2:
     targets:
-      - layers.canvas.knobB
-    transformFunction: 'function(val) { return val; }'
+      - layers.canvas.parameters.knobB.value
+    transformFunction: return val;
     source: 'midi:nk2.knob2'
   knob3:
     targets:
-      - layers.canvas.knobC
-    transformFunction: 'function(val) { return val; }'
+      - layers.canvas.parameters.knobC.value
+    transformFunction: return val;
     source: 'midi:nk2.knob3'
   slider1:
     targets:
-      - layers.canvas.sliderA
-    transformFunction: 'function(val) { return val; }'
+      - layers.canvas.parameters.sliderA.value
+    transformFunction: return val;
     source: 'midi:nk2.slider1'
   slider2:
     targets:
-      - layers.canvas.sliderB
-    transformFunction: 'function(val) { return val; }'
+      - layers.canvas.parameters.sliderB.value
+    transformFunction: return val;
     source: 'midi:nk2.slider2'
   slider3:
     targets:
-      - layers.canvas.sliderC
-    transformFunction: 'function(val) { return val; }'
+      - layers.canvas.parameters.sliderC.value
+    transformFunction: return val;
     source: 'midi:nk2.slider3'
-  slider7Str:
+  constSrcFront:
     targets:
-      - layers.frontcpy.parameters.--rotation.value
-      - layers.front3cpy.parameters.--rotation.value
-    transformFunction: 'function(val) { return val.toString(); }'
-    source: 'midi:nk2.slider7'
-  slider8Str:
-    targets:
-      - layers.back.parameters.--rotation.value
-      - layers.front.parameters.--rotation.value
-      - layers.front3.parameters.--rotation.value
-      - layers.back3.parameters.--rotation.value
-    transformFunction: 'function(val) { return val.toString(); }'
-    source: 'midi:nk2.slider8'
-  beatSkyFront:
-    targets:
-      - layers.front.src
-      - layers.frontcpy.src
+      - layers.constFront.parameters.src.value
+      - layers.constMid.parameters.src.value
     transformFunction: |-
-      function(val) {
-        var c = 3;
-        var t = 1;
-        var i = Math.floor((val % (c * t)) / t) + 1;
-        return './assets/construction-work/'+ i +'/front.png';
-      }
-    source: signals.beat.beatnum
-  beatSkyBack:
+      var c = 3;
+      var t = 2;
+      var i = Math.floor((val % (c * t)) / t) + 1;
+      return './assets/construction-work/'+ i +'/front.png';
+    source: clock.beatnum
+  constSrcBack:
     targets:
-      - layers.back.src
+      - layers.constBack.parameters.src.value
     transformFunction: |-
-      function(val) {
-        var c = 3;
-        var t = 1;
-        var i = Math.floor((val % (c * t)) / t) + 1;
-        return './assets/construction-work/'+ i +'/back.png';
-      }
-    source: signals.beat.beatnum
-  beatTreeFront:
+      var c = 3;
+      var t = 2;
+      var i = Math.floor((val % (c * t)) / t) + 1;
+      return './assets/construction-work/'+ i +'/back.png';
+    source: clock.beatnum
+  treeSrcFront:
     targets:
-      - layers.front3cpy.src
-      - layers.front3.src
+      - layers.treeMid.parameters.src.value
+      - layers.treeFront.parameters.src.value
     transformFunction: |-
-      function(val) {
-        var c = 3;
-        var t = 1;
-        var i = Math.floor((val % (c * t)) / t) + 1;
-        return './assets/trees/'+ i +'/front.png';
-      }
-    source: signals.beat.beatnum
-  beatTreeBack:
+      var c = 3;
+      var t = 2;
+      var i = Math.floor((val % (c * t)) / t) + 1;
+      return './assets/trees/'+ i +'/front.png';
+    source: clock.beatnum
+  treeSrcBack:
     targets:
-      - layers.back3.src
+      - layers.treeBack.parameters.src.value
     transformFunction: |-
-      function(val) {
-        var c = 3;
-        var t = 1;
-        var i = Math.floor((val % (c * t)) / t) + 1;
-        return './assets/trees/'+ i +'/back.png';
-      }
-    source: signals.beat.beatnum
-  knobBlur:
-    targets: []
-    transformFunction: 'function (val) { return val.toString(); }'
-    source: 'midi:nk2.slider1'
-  beatBlur:
-    targets:
-      - layers.back.parameters.--blur.value
-      - layers.front.parameters.--blur.value
-      - layers.frontcpy.parameters.--blur.value
-      - layers.back3.parameters.--blur.value
-      - layers.back3.parameters.--blur.value
-      - layers.back3.parameters.--blur.value
-      - layers.front3.parameters.--blur.value
-      - layers.front3cpy.parameters.--blur.value
-    transformFunction: 'function (val) { return (val * 0.3).toString(); }'
-    source: signals.beat.result
+      var c = 3;
+      var t = 2;
+      var i = Math.floor((val % (c * t)) / t) + 1;
+      return './assets/trees/'+ i +'/back.png';
+    source: clock.beatnum
   toggleConsruction:
     targets:
-      - layers.back.active
-      - layers.front.active
-      - layers.frontcpy.active
-    transformFunction: 'function (val, prev) { return val ? !prev : prev; }'
+      - layers.constBack.parameters.active.value
+      - layers.treeBack.parameters.active.value
+      - layers.constFront.parameters.active.value
+    transformFunction: 'return val ? !prev : prev;'
     source: 'midi:nk2.r1'
   toggleTree:
     targets:
-      - layers.back3.active
-      - layers.front3cpy.active
-      - layers.front3.active
-    transformFunction: 'function (val, prev) { return !val ? !prev : prev; }'
+      - layers.constMid.parameters.active.value
+      - layers.treeMid.parameters.active.value
+      - layers.treeFront.parameters.active.value
+    transformFunction: 'return val ? !prev : prev;'
     source: 'midi:nk2.r1'
+  cwRotation:
+    targets:
+      - layers.constMid.parameters.rotation.value
+      - layers.treeMid.parameters.rotation.value
+    transformFunction: return ((360 / -127) * val) + 'deg';
+    source: 'midi:nk2.slider8'
+  ccwRotation:
+    targets:
+      - layers.treeFront.parameters.rotation.value
+      - layers.constFront.parameters.rotation.value
+    transformFunction: return ((360 / 127) * val) + 'deg';
+    source: 'midi:nk2.slider7'
 layers:
-  back:
+  constBack:
     type: img
-    active: true
-    opacity: 100
-    zIndex: 0
     layerStyles: |-
-      filter: blur(calc(1px * var(--blur))) grayscale(1);
-      transform: scale(calc(1 + (var(--blur) * 0.01)));
+      filter: saturate(0%);
+      transform: scale(calc(1 + ((100 - var(--beatprct)) * 0.005)));
     parameters:
+      - name: active
+        type: boolean
+        value: true
+        default: true
       - name: src
         type: string
-        value: ./assets/construction-work/2/back.png
-      - name: 'blur'
-        value: '0.007766449999921576'
-        default: '0'
-      - name: 'rotation'
-        value: '0'
-        default: '0'
-      - name: 'r'
-        value: calc((360deg / -127) * var(--rotation))
-        default: '0'
-  back3:
+        value: ./assets/construction-work/3/back.png
+        default: ''
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0
+  treeBack:
     type: img
-    active: false
-    opacity: 100
-    zIndex: 0
     layerStyles: |-
-      filter: blur(calc(1px * var(--blur))) grayscale(1);
-      transform: scale(calc(1 + (var(--blur) * 0.01)))
-                rotateX(var(--r));
+      filter: saturate(0%);
+      transform: scale(calc(1 + ((100 - var(--beatprct)) * 0.005)));
     parameters:
+      - name: active
+        type: boolean
+        value: false
+        default: false
       - name: src
         type: string
-        value: ./assets/trees/2/back.png
-      - name: 'blur'
-        value: '0.007766449999921576'
-        default: '0'
-      - name: 'rotation'
-        value: '0'
-        default: '0'
-  frontcpy:
+        value: ./assets/trees/3/back.png
+        default: ''
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0
+  constMid:
     type: img
-    active: true
-    opacity: 100
-    zIndex: 45
     layerStyles: |-
-      filter: blur(calc(1px * var(--blur))) grayscale(1);
-      transform: scale(calc(1 + (var(--blur) * 0.01)))
-                  rotate(calc(-1deg * var(--rotation)));
+      filter: saturate(0%);
+      transform: scale(calc(1 + ((100 - var(--beatprct)) * 0.005)))
+                  rotateZ(var(--rotation));
     parameters:
+      - name: active
+        type: boolean
+        value: true
+        default: true
+      - name: rotation
+        type: any
+        value: '-294.8031496062992deg'
+        default: '0'
       - name: src
         type: string
-        value: ./assets/construction-work/2/front.png
-      - name: 'blur'
-        value: '0.007766449999921576'
-        default: '0'
-      - name: 'rotation'
-        value: '0'
-        default: '0'
-  front3cpy:
+        value: ./assets/construction-work/3/front.png
+        default: ''
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0
+  treeMid:
     type: img
-    active: false
-    opacity: 100
-    zIndex: 49
-    layerStyles: >-
-      filter: blur(calc(1px * var(--blur))) grayscale(1);
-
-      transform: scale(calc(1 + (var(--blur) * 0.01))) rotateZ(calc((360deg /
-      127) * var(--rotation)));
+    layerStyles: |-
+      filter: saturate(0%);
+      transform: scale(calc(1 + ((100 - var(--beatprct)) * 0.005)))
+                  rotateZ(var(--rotation));
     parameters:
+      - name: active
+        type: boolean
+        value: false
+        default: false
+      - name: rotation
+        type: any
+        value: '-294.8031496062992deg'
+        default: '0'
       - name: src
         type: string
-        value: ./assets/trees/2/front.png
-      - name: 'blur'
-        value: '0.007766449999921576'
-        default: '0'
-      - name: 'rotation'
-        value: '0'
-        default: '0'
+        value: ./assets/trees/3/front.png
+        default: ''
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0
   canvas:
     type: canvas
-    active: false
-    opacity: 100
-    zIndex: 50
-    layerStyles: ''
-    clear: 1
+    layerStyles: 'mix-blend-mode: multiply;'
+    updateFunction: >
+      ctx.clearRect(0, 0, width, height);
+
+      var mf = 1 / 127;
+
+      var kA = param('knobA', 63);
+
+      var kB = param('knobB', 63);
+
+      var kC = param('knobC', 63);
+
+      var sA = param('sliderA', 63);
+
+      var sB = param('sliderB', 63);
+
+      var sC = param('sliderC', 63);
+
+      var count = Math.pow((beatnum % 4) + 2, 2);
+
+      var rows = Math.sqrt(count);
+
+      var baseSize = sA + 1;
+
+      var sides = rows + 2;//utils.between(Math.round(sB * (1 / (127 /
+      9))),3,9);
+
+      var baseLineWidth = utils.between(sC * (1 / (127 / 16)),1,16);
+
+
+      var col = 'hsl('+Math.round(kA * mf * 360)+','+Math.round(kB * mf *
+      100)+'%,'+Math.round((vol(16) / 255) * 100)+'%)';
+
+      /*
+
+      var i = 0;
+
+      grid(count, rows, function (x, y) {
+        ctx.lineWidth = (frq(i) * 0.025 * vmin * baseLineWidth);
+        ctx.strokeStyle = col;
+        polygone(x, y, vmin * baseSize, sides);
+        i++;
+      });
+
+      */
+
+
+      var tau = Math.PI * 2;
+
+      ctx.lineWidth = vmin * 0.5;
+
+      var v = (360 / 255) * vol();
+
+
+      var baseX = width / 2;
+
+      var baseY = height / 2;
+
+      var groupCount = sides + 1;//7;
+
+      var circleCount = 15;
+
+
+      repeat(groupCount, function(groupNum) {
+        var a = (tau / (groupCount -1)) * groupNum;
+        var xTilt = groupNum ? Math.sin(a) * (vmin * 25) : 0;
+        var yTilt = groupNum ? Math.cos(a) * (vmin * 25) : 0;
+
+        repeat(circleCount, function(circleNum) {
+          // var f = Math.round((360 / circleCount) * circleNum);
+          ctx.strokeStyle = 'hsl('+v+', 100%, 50%)';
+          polygone(baseX + xTilt, baseY + yTilt, vmin * circleNum, sides);
+          // ctx.beginPath();
+          // ctx.arc(baseX + xTilt, baseY + yTilt, vmin * circleNum, 0, tau);
+          // ctx.stroke();
+        });
+
+      });
     parameters:
+      - name: active
+        type: boolean
+        value: true
+        default: true
+      - name: clear
+        type: number
+        value: 1
+        default: 1
       - name: knobA
         type: number
+        value: 70
         default: 63
       - name: knobB
         type: number
+        value: 103
         default: 63
       - name: knobC
         type: number
+        value: 63
         default: 63
       - name: sliderA
         type: number
+        value: 47
         default: 63
       - name: sliderB
         type: number
+        value: 56
         default: 63
       - name: sliderC
         type: number
+        value: 54
         default: 63
-    updateFunction: |-
-      var count = 128;
-      var rows = 8;
-      var i = 0;
-
-      var kA = param('knobA');
-      var kB = param('knobB');
-      var kC = param('knobC');
-      var sA = param('sliderA');
-      var sB = param('sliderB');
-      var sC = param('sliderC');
-
-      var col = 'hsl('+Math.round(kA * (1 / 127) * 360)+','+Math.round(kB * (1 / 127) * 100)+'%,'+Math.round(kC * (1 / 127) * 100)+'%)';
-
-      grid(count, rows, function (x, y) {
-        lineWidth(frq(i) * 0.025 * between(sC * (1 / (127 / 16)),1,16));
-        polygone(x, y, timeDomain(i) * 0.1 * between(sA,1,127), between(Math.round(sB * (1 / (127 / 9))),3,9));
-        i++;
-      });
-  front:
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0
+  constFront:
     type: img
-    active: true
-    opacity: 100
-    zIndex: 100
     layerStyles: |-
-      filter: blur(calc(1px * var(--blur))) grayscale(1);
-      transform: scale(calc(1 + (var(--blur) * 0.01)))
-                  rotate(calc(1deg * var(--rotation)));
+      filter: saturate(0%);
+      transform: scale(calc(1 + ((100 - var(--beatprct)) * 0.005)))
+                  rotateZ(var(--rotation));
     parameters:
+      - name: active
+        type: boolean
+        value: true
+        default: true
+      - name: rotation
+        type: any
+        value: 192.75590551181102deg
+        default: '0'
       - name: src
         type: string
-        value: ./assets/construction-work/2/front.png
-      - name: 'blur'
-        value: '0.007766449999921576'
-        default: '0'
-      - name: 'rotation'
-        value: '0'
-        default: '0'
-  front3:
+        value: ./assets/construction-work/3/front.png
+        default: ''
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0
+  treeFront:
     type: img
-    active: false
-    opacity: 100
-    zIndex: 100
-    layerStyles: >-
-      filter: blur(calc(1px * var(--blur))) grayscale(1);
-
-      transform: scale(calc(1 + (var(--blur) * 0.01))) rotateZ(calc((360deg /
-      -127) * var(--rotation)));
+    layerStyles: |-
+      filter: saturate(0%);
+      transform: scale(calc(1 + ((100 - var(--beatprct)) * 0.005)))
+                  rotateZ(var(--rotation));
     parameters:
+      - name: active
+        type: boolean
+        value: false
+        default: false
+      - name: rotation
+        type: any
+        value: 192.75590551181102deg
+        default: '0'
       - name: src
         type: string
-        value: ./assets/trees/2/front.png
-      - name: 'blur'
-        value: '0.007766449999921576'
-        default: '0'
-      - name: 'rotation'
-        value: '0'
-        default: '0'
+        value: ./assets/trees/3/front.png
+        default: ''
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0
+  plot:
+    type: canvas
+    layerStyles: ''
+    updateFunction: |-
+      ctx.clearRect(0, 0, width, height);
+      var _heap = usedHeap / (1024 * 1024);
+      var _fps = ((fps - 60) / 30);
+      var _bang = vol() > (255 *(3 / 2)) ? 1 : 0;
+      plotPush('fps', _fps, width);
+      plotPush('bang', _bang, width);
+
+      plot([
+        ['fps', 'white'],
+        ['bang', 'red']
+      ]);
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'black';
+      ctx.strokeStyle = 'white';
+      ctx.font = '20px monospace';
+      writeThings([
+        _heap.toFixed(2),
+        fps.toFixed(),
+        _fps.toFixed(),
+        _bang.toFixed(),
+      ]);
+    parameters:
+      - name: active
+        type: boolean
+        value: true
+        default: true
+      - name: clear
+        type: number
+        value: 1
+        default: 1
+      - name: zIndex
+        type: number
+        value: 0
+        default: 0

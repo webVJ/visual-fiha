@@ -7,60 +7,60 @@ mappings:
   knob1:
     targets:
       - layers.zero.parameters.knob1.value
-    transformFunction: 'function(val) { return val.toString(); }'
+    transformFunction: 'return val.toString();'
     source: 'midi:nk2.knob1'
   knob2:
     targets:
       - layers.zero.parameters.knob2.value
-    transformFunction: 'function(val) { return val.toString(); }'
+    transformFunction: 'return val.toString();'
     source: 'midi:nk2.knob2'
   knob3:
     targets:
       - layers.zero.parameters.knob3.value
-    transformFunction: 'function(val) { return val.toString(); }'
+    transformFunction: 'return val.toString();'
     source: 'midi:nk2.knob3'
   knob4:
     targets:
       - layers.zero.parameters.knob4.value
-    transformFunction: 'function(val) { return val.toString(); }'
+    transformFunction: 'return val.toString();'
     source: 'midi:nk2.knob4'
   slider1:
     targets:
       - layers.zero.parameters.slider1.value
-    transformFunction: 'function(val) { return val.toString(); }'
+    transformFunction: 'return val.toString();'
     source: 'midi:nk2.slider1'
   slider2:
     targets:
       - layers.zero.parameters.slider2.value
-    transformFunction: 'function(val) { return val.toString(); }'
+    transformFunction: 'return val.toString();'
     source: 'midi:nk2.slider2'
   slider3:
     targets:
       - layers.zero.parameters.slider3.value
-    transformFunction: 'function(val) { return val.toString(); }'
+    transformFunction: 'return val.toString();'
     source: 'midi:nk2.slider3'
   slider4:
     targets:
       - layers.zero.parameters.slider4.value
-    transformFunction: 'function(val) { return val.toString(); }'
+    transformFunction: 'return val.toString();'
     source: 'midi:nk2.slider4'
   beatResult:
     targets:
       - layers.zero.opacity
-    transformFunction: 'function(val) { return val; }'
+    transformFunction: 'return val;'
     source: signals.beatA.result
   beatResultNeg:
     targets:
       - layers.zeropaperLogo.opacity
-    transformFunction: 'function(val) { return 100 - val; }'
+    transformFunction: 'return 100 - val;'
     source: signals.beatA.result
   beatnumContructionPath:
     targets:
       - layers.bgk.src
       - layers.bgk2.src
     transformFunction: >-
-      function(val) { return './assets/construction-work/'+ ((val % 3) + 1)
-      +'/front.png'; }
+      return './assets/construction-work/'+ ((val % 3) + 1)
+      +'/front.png';
     source: signals.beatA.beatnum
 layers:
   bgk:
@@ -98,13 +98,11 @@ layers:
             // child.material.wireframe = true; // provokes illegal operation \uD83D\uDE22
           });
           clone.name = 'clone' + c;
-          layer.scene.add(clone);
+          scene.add(clone);
         }
       }
 
-      var fatView = layer.loaders.views.filter(v => v.model.name === 'fat')[0];
-      layer.listenToAndRun(fatView, 'change:object', function() {
-        var fatObject = fatView.object;
+      loaderObject('fat', function(fatObject) {
         if (!fatObject) return;
 
         fatObject.traverse(function(child) {
@@ -131,10 +129,10 @@ layers:
       var s2 = param('slider2', 50);
       var s3 = param('slider3', 50);
 
-      layer.camera.position.set(Math.cos(deg) * dist, 15, Math.sin(deg) * dist);
-      layer.camera.lookAt(layer.scene.position);
+      camera.position.set(Math.cos(deg) * dist, 15, Math.sin(deg) * dist);
+      camera.lookAt(scene.position);
 
-      var fat = layer.scene.getObjectByName('fat');
+      var fat = scene.getObjectByName('fat');
       if (!fat) return;
       fat.scale.set(scale + 1, scale + 1, scale + 1);
       fat.rotation.set(Math.PI * 0.35, utils.midi2Rad(k1), utils.midi2Rad(k2));
@@ -174,7 +172,7 @@ layers:
       function applyClones(count = 1) {
         for (var c = 1; c <= count; c++) {
           var cloneName = 'clone' + c;
-          var clone = layer.scene.getObjectByName(cloneName);
+          var clone = scene.getObjectByName(cloneName);
           applyClone(clone, c);
         }
       }
