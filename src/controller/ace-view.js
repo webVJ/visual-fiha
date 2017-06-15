@@ -349,6 +349,30 @@ var AceEditor = View.extend({
       togglecomment: {
         mac: 'Command-7',
         win: 'Ctrl-7'
+      },
+      movelinesup: {
+        mac: 'Shift-Command-Up',
+        win: 'Shift-Ctrl-Up'
+      },
+      movelinesdown: {
+        mac: 'Shift-Command-Down',
+        win: 'Shift-Ctrl-Down'
+      },
+      // selectMoreBefore: {
+      //   mac: 'Shift-Command-D',
+      //   win: 'Shift-Ctrl-D'
+      // },
+      selectMoreAfter: {
+        mac: 'Command-D',
+        win: 'Ctrl-D'
+      },
+      addCursorAbove: {
+        mac: 'Shift-Alt-Up',
+        win: 'Shift-Alt-Up'
+      },
+      addCursorBelow: {
+        mac: 'Shift-Alt-Down',
+        win: 'Shift-Alt-Down'
       }
     };
     Object.keys(customSC).forEach(function(commandName) {
