@@ -207,9 +207,9 @@ var ThreeLoader = ThreeObject.extend({
 
 
 function applyTransformations(model, object) {
-  var s = model.scale;
-  var r = model.rotation;
-  var p = model.position;
+  var s = model.scale || 1;
+  var r = model.rotation || 0;
+  var p = model.position || 0;
   object.scale.set(s.x, s.y, s.z);
   object.rotation.set(r.x, r.y, r.z);
   object.position.set(p.x, p.y, p.z);
@@ -217,23 +217,33 @@ function applyTransformations(model, object) {
 
 ThreeLoader.types = {};
 ThreeLoader.types.scene = ThreeLoader.extend({
+  addObj: function() {
+    this.parent.scene = this.object;
+
+    // var camName;
+    // this.parent.scene.children.forEach(function(child) {
+    //   if (child.type.indexOf('Camera') > -1) camName = child.name;
+    // });
+    // if (camName) this.model.currentCamera = camName;
+
+    return this;
+  },
+
   load: function(done, progress = noop, error = noop) {
     var view = this;
     var model = this.model;
-    console.trace('%s Scene loader', model.name);
 
     var loader = new THREE.ObjectLoader();
 
     function loaded(object) {
       console.info(model.name +' object', object);
-      if (!object) return;
+      if (!object) return error(new Error('Missing loaded object'));
       view.loaded = object;
-      // applyTransformations(model, object);
       done();
     }
 
-    loader.load(model.path + model.src, loaded, function(...args) {
-      console.log('%s loading progress', model.name, ...args);
+    loader.load(model.path + model.src, loaded, function(evt) {
+      console.log('%s loading progress %s%', model.name, ((evt.loaded / evt.total) * 100).toFixed());
     }, function(...args) {
       console.warn('%c%s loading error', 'color:red', model.name, ...args);
       error(...args);
@@ -253,8 +263,7 @@ ThreeLoader.types.json = ThreeLoader.extend({
     var loader = new THREE.JSONLoader();
 
     function loaded(object) {
-      console.info(model.name +' object', object);
-      if (!object) return;
+      if (!object) return error(new Error('Missing loaded object'));
       object.name = model.name;
       view.loaded = object;
       applyTransformations(model, object);
@@ -300,12 +309,6 @@ ThreeLoader.types.objmtl = ThreeLoader.extend({
         return this.loaded ? this.loaded.object : false;
       }
     }
-  },
-
-  addObj: function() {
-    var obj = this.object;
-    this.scene.add(obj);
-    return this;
   },
 
   load: function(done, progress = noop, error = noop) {
@@ -372,17 +375,17 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
     return this;
   },
 
+  session: {
+    scene: ['object', true, function() {
+      return new THREE.Scene();
+    }]
+  },
+
   derived: {
     manager: {
       deps: [],
       fn: function() {
         return new THREE.LoadingManager();
-      }
-    },
-    scene: {
-      deps: [],
-      fn: function() {
-        return new THREE.Scene();
       }
     },
     renderer: {
@@ -401,8 +404,9 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
       fn: function() {
         if (!this.scene) return;
         var model = this.model;
+
         var info = model.currentCamera ?
-                    model.cameras.get(model.currentCamera) :
+                    {name: model.currentCamera} :
                     model.cameras.at(0);
 
         if (!info) {
