@@ -151,13 +151,11 @@ var ControllerView = View.extend({
         var router = controllerView.router;
         var settings = router.settings;
 
-        if (router) {
-          controllerView.set({
-            showControlScreen: settings.get('showControlScreen', true),
-            controlScreenWidth: settings.get('controlScreenWidth', 400),
-            controlScreenHeight: settings.get('controlScreenHeight', 300)
-          });
-        }
+        controllerView.set({
+          showControlScreen: settings.get('showControlScreen', true),
+          controlScreenWidth: settings.get('controlScreenWidth', 400),
+          controlScreenHeight: settings.get('controlScreenHeight', 300)
+        });
 
         var view = new ControlScreenControls({
           active: controllerView.showControlScreen,
