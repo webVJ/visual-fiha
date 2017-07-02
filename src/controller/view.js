@@ -149,8 +149,8 @@ var ControllerView = View.extend({
       prepareView: function() {
         var controllerView = this;
         var router = controllerView.router;
-        var settings = router.settings;
 
+        var settings = router.settings;
         controllerView.set({
           showControlScreen: settings.get('showControlScreen', true),
           controlScreenWidth: settings.get('controlScreenWidth', 400),
@@ -283,21 +283,18 @@ var ControllerView = View.extend({
         }
 
 
-        parent.audioSource = new AudioSource({
+        parent.audioSource = parent.registerSubview(new AudioSource({
           model: parent.audio,
-          parent: parent,
           color: styles.color
-        });
+        }));
 
         if (parent.midi) {
-          parent.MIDIAccess = new MIDIAccessView({
-            parent: parent,
+          parent.MIDIAccess = parent.registerSubview(new MIDIAccessView({
             model: parent.midi
-          });
+          }));
         }
 
-        var view = new RegionView({
-          parent: parent,
+        var view = parent.registerSubview(new RegionView({
           el: el,
           currentView: parent.mappingsView,
           tabs: [
@@ -305,7 +302,7 @@ var ControllerView = View.extend({
             {name: 'MIDI', view: parent.MIDIAccess, pinned: true},
             {name: 'Audio', view: parent.audioSource, pinned: true}
           ]
-        });
+        }));
 
         view.el.classList.add('row');
         view.el.classList.add('grow-l');
