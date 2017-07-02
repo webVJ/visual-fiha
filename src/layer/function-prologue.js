@@ -8,8 +8,12 @@ const bpm = model.screenState.clock.bpm;
 const beatnum = model.screenState.clock.beatnum;
 const beatprct = model.screenState.clock.beatprct;
 const beatlength = model.screenState.clock.beatlength;
-const latency = model.screenState.clock.latency;
 
+const timeToBeat = function(count = 1) {
+  return (((beatnum % count) + 1) - (beatprct * 0.01)) / count;
+};
+
+const latency = model.screenState.clock.latency;
 const fps = this.parent.fps;
 const usedHeap = this.parent.usedHeap;
 
