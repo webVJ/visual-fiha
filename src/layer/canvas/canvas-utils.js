@@ -231,8 +231,8 @@ utils.writeThings = function writeThings(ctx, lines = []) {
   lines.forEach(function(txt, t) {
     x = ctx.canvas.width * 0.5;
     y = start + (t * fSize);
-    ctx.fillText(txt, x, y);
     ctx.strokeText(txt, x, y);
+    ctx.fillText(txt, x, y);
   });
 };
 
