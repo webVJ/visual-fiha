@@ -373,6 +373,14 @@ var AceEditor = View.extend({
       addCursorBelow: {
         mac: 'Shift-Alt-Down',
         win: 'Shift-Alt-Down'
+      },
+      modifyNumberUp: {
+        mac: 'Alt-Up',
+        win: 'Alt-Up'
+      },
+      modifyNumberDown: {
+        mac: 'Alt-Down',
+        win: 'Alt-Down'
       }
     };
     Object.keys(customSC).forEach(function(commandName) {
