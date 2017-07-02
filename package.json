@@ -34,7 +34,7 @@
     "webpack-dev-server": "^2.2.0"
   },
   "dependencies": {
-    "ace-builds": "^1.2.5",
+    "ace-builds": "^1.2.8",
     "ampersand-collection": "^2.0.0",
     "ampersand-events": "^2.0.2",
     "ampersand-router": "^4.0.0",
