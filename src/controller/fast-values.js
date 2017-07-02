@@ -3,9 +3,19 @@ function fastValues(selector = 'canvas', width = 100, height = 31) {
   return {
     binding: function(el, val) {
       var style = getComputedStyle(el);
-      console.info('font', style.font);
+      if (!style) return;
+
       var ctx = this.ctx;
       if (!ctx) return;
+
+      var cnv = ctx.canvas;
+      if (cnv.width != cnv.parentNode.clientWidth || cnv.width != cnv.parentNode.clientWidth) {
+        cnv.width = cnv.parentNode.clientWidth;
+        cnv.height = cnv.parentNode.clientHeight;
+        this.trigger('cnv');
+        ctx = this.ctx;
+      }
+
       var h = ctx.canvas.height;
       var hh = h * 0.5;
       var w = ctx.canvas.width;
@@ -14,20 +24,18 @@ function fastValues(selector = 'canvas', width = 100, height = 31) {
       ctx.font = style.font;// hh + 'px monospace';
       ctx.textBaseline = 'middle';
       ctx.textAlign = 'center';
-      // ctx.strokeStyle = 'black';
-      // ctx.strokeText(val, hw, hh);
       ctx.fillStyle = style.color;
       ctx.fillText(val, hw, hh);
     },
 
     derived: {
       ctx: {
-        deps: ['el'],
+        deps: ['el', 'cnv'],
         fn: function() {
           var canvas = this.query(selector);
           if (!canvas) return;
-          canvas.width = width;
-          canvas.height = canvas.nextElementSibling.clientHeight || height;
+          canvas.width = canvas.parentNode.clientWidth || width;
+          canvas.height = canvas.parentNode.clientHeight || height;
           return canvas.getContext('2d');
         }
       }
