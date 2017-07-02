@@ -12,8 +12,8 @@ var ParamView = View.extend({
       <div class="column no-grow parameter-value-reset">
         <button title="Reset to default value" class="vfi-cancel"></button>
       </div>
-      <canvas class="column"></canvas>
       <div class="column parameter-value">
+        <canvas></canvas>
         <input name="value" type="text" />
       </div>
       <div class="column parameter-mapping-clear no-grow">
@@ -128,12 +128,12 @@ var ParamView = View.extend({
       },
       {
         type: 'toggle',
-        selector: '.parameter-value',
+        selector: '.parameter-value input,.parameter-value button',
         invert: true
       },
       {
         type: 'toggle',
-        selector: 'canvas'
+        selector: '.parameter-value canvas'
       },
       {
         type: 'value',
@@ -280,8 +280,8 @@ ParamView.types.boolean = ParamView.extend({
       <div class="column no-grow parameter-value-reset">
         <button title="Reset to default value" class="vfi-cancel"></button>
       </div>
-      <canvas class="column"></canvas>
       <div class="column parameter-value">
+        <canvas></canvas>
         <button class="parameter-toggle-btn"></button>
       </div>
       <div class="column parameter-mapping-clear no-grow">
@@ -342,8 +342,8 @@ ParamView.types.number = ParamView.extend({
       <div class="column no-grow parameter-value-reset">
         <button title="Reset to default value" class="vfi-cancel"></button>
       </div>
-      <canvas class="column"></canvas>
       <div class="column parameter-value">
+        <canvas></canvas>
         <input name="value" type="number" />
       </div>
       <div class="column parameter-mapping-clear no-grow">
