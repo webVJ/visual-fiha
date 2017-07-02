@@ -60,9 +60,6 @@ var LayersView = View.extend({
   template: `
     <section class="row layers">
       <header class="columns">
-        <div class="column no-grow gutter">
-          <label for="new-layer-name">New layer</label>
-        </div>
         <div class="column">
           <input id="new-layer-name" data-hook="layer-name" placeholder="Name" type="text"/>
         </div>
