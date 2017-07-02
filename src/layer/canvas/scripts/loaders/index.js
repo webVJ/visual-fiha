@@ -12,6 +12,7 @@ function loadImg(url, done) {
   }
 
   var img = new Image();
+  img.crossOrigin = 'anonymous';
   _cacheImgs[url] = false;
   img.onload = function() {
     _cacheImgs[url] = img;
@@ -32,6 +33,7 @@ function loadVideo(url, done) {
 
   var video = document.createElement('video');
   _cacheVideos[url] = false;
+  video.crossOrigin = 'anonymous';
 
   video.loop = true;
   video.autoplay = true;
@@ -39,7 +41,7 @@ function loadVideo(url, done) {
   video.muted = true;
   video.volume = 0;
   video.controls = false;
-  video.oncanplaythrough = function() {
+  video.oncanplay = function() {
     if (_cacheVideos[url]) return;
     video.width = video.videoWidth;
     video.height = video.videoHeight;
