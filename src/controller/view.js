@@ -284,18 +284,6 @@ var ControllerView = View.extend({
           return parent.layersView;
         }
 
-        function buildSignals() {
-          if (parent.signalsView && parent.signalsView.remove) {
-            parent.signalsView.remove();
-            parent.stopListening(parent.signalsView);
-          }
-          parent.signalsView = new SignalsView({
-            collection: parent.signals,
-            parent: parent,
-            model: parent.model
-          });
-          return parent.signalsView;
-        }
 
         parent.audioSource = new AudioSource({
           model: parent.audio,
@@ -316,7 +304,6 @@ var ControllerView = View.extend({
           currentView: parent.mappingsView,
           tabs: [
             {name: 'Layers', rebuild: buildLayers, pinned: true, active: true},
-            {name: 'Signals', rebuild: buildSignals, pinned: true},
             {name: 'MIDI', view: parent.MIDIAccess, pinned: true},
             {name: 'Audio', view: parent.audioSource, pinned: true}
           ]
