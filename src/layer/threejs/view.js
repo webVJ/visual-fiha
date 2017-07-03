@@ -406,7 +406,7 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
         var model = this.model;
 
         var info = model.currentCamera ?
-                    {name: model.currentCamera} :
+                    model.cameras.get(model.currentCamera) :
                     model.cameras.at(0);
 
         if (!info) {
@@ -426,6 +426,17 @@ module.exports = ScreenLayerView.types.threejs = ScreenLayerView.extend(programm
               z: 0
             }
           };
+        }
+        else {
+          info.position = info.position || {};
+          info.position.x = info.position.x || 0;
+          info.position.y = info.position.y || 0;
+          info.position.z = info.position.z || 0;
+
+          info.lookAt = info.lookAt || {};
+          info.lookAt.x = info.lookAt.x || 0;
+          info.lookAt.y = info.lookAt.y || 0;
+          info.lookAt.z = info.lookAt.z || 0;
         }
 
         var camera = this.scene.getObjectByName(info.name);
